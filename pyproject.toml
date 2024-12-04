@@ -3,9 +3,9 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "digitalhub"
+name = "digitalhub-runtime-dbt"
 version = "0.9.0b0"
-description = "Python SDK for Digitalhub"
+description = "Dbt runtime for DHCore"
 readme = "README.md"
 authors = [
     { name = "Fondazione Bruno Kessler", email = "dslab@fbk.eu" },
@@ -21,48 +21,16 @@ classifiers = [
 keywords = ["data", "dataops", "kubernetes"]
 requires-python = ">=3.9"
 dependencies = [
-    "boto3",
-    "pydantic",
-    "sqlalchemy<2",
-    "pyarrow",
-    "numpy<2",
-    "requests",
-    "PyYAML",
-    "python-dotenv",
-    "GitPython>=3",
-    "psycopg2-binary",
-    "python-slugify",
+"digitalhub[pandas]>=0.9.0b, <0.10",
 ]
-
 [project.optional-dependencies]
-full = [
-    "pandas>=1.2, <2.2",
-    "mlflow",
-]
-pandas = [
-    "pandas>=1.2, <2.2",
-]
-mlflow = [
-    "mlflow",
-]
-dev = [
-    "black",
-    "pytest",
-    "bumpver",
-    "ruff",
-    "moto"
-]
-docs = [
-    "Sphinx>=7",
-    "pydata-sphinx-theme>=0.15",
-    "numpydoc>=1.6"
+local = [
+    "dbt-postgres<1.9",
+    "dbt-adapters==1.1.1",
 ]
 
 [project.urls]
 Homepage = "https://github.com/scc-digitalhub/digitalhub-sdk"
-
-[tool.setuptools.packages.find]
-exclude = ["wrapper*", "runtimes*"]
 
 [tool.flake8]
 max-line-length = 120
