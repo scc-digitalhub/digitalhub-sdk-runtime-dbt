@@ -46,7 +46,7 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git commit -a -m "bump: bumpver"
-          git push origin HEAD:main
+          git push
 
       # Store current version for later use
       - name: Current version
