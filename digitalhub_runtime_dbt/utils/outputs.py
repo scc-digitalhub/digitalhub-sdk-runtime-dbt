@@ -199,7 +199,7 @@ def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: st
 
         # Update dataitem relationships with run key
         dest = run_key + ":" + run_key.split("/")[-1]
-        dataitem.add_relationship(relation=Relationship.PRODUCEDBY.value, source=dataitem.key, dest=dest)
+        dataitem.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
 
         # Update dataitem status with preview
         dataitem.status.preview = _get_data_preview(columns, data, rows_count)
