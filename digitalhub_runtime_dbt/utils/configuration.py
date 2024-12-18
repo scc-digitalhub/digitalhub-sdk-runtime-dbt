@@ -6,7 +6,13 @@ from digitalhub.utils.generic_utils import decode_base64_string, extract_archive
 from digitalhub.utils.git_utils import clone_repository
 from digitalhub.utils.logger import LOGGER
 from digitalhub.utils.s3_utils import get_bucket_and_key, get_s3_source
-from digitalhub.utils.uri_utils import has_git_scheme, has_remote_scheme, has_s3_scheme
+from digitalhub.utils.uri_utils import (
+    get_filename_from_uri,
+    has_git_scheme,
+    has_remote_scheme,
+    has_s3_scheme,
+    has_zip_scheme,
+)
 
 from digitalhub_runtime_dbt.utils.env import (
     POSTGRES_DATABASE,
@@ -198,20 +204,28 @@ def save_function_source(path: Path, source_spec: dict) -> str:
     if base64 is not None:
         return decode_base64_string(base64)
 
-    # Http(s) or s3 presigned urls
-    if has_remote_scheme(source):
-        filename = path / "archive.zip"
-        requests_chunk_download(source, filename)
-        extract_archive(path, filename)
+    if source is None:
+        raise RuntimeError("Function source not found in spec.")
 
     # Git repo
     if has_git_scheme(source):
-        path = path / "repository"
         clone_repository(path, source)
 
+    # Http(s) or s3 presigned urls
+    elif has_remote_scheme(source):
+        if has_zip_scheme(source):
+            filename = path / get_filename_from_uri(source)
+            source = source.removeprefix("zip+")
+        else:
+            filename = path / "archive.zip"
+        requests_chunk_download(source, filename)
+        extract_archive(path, filename)
+
     # S3 path
-    if has_s3_scheme(source):
-        filename = path / "archive.zip"
+    elif has_s3_scheme(source):
+        if not has_zip_scheme(source):
+            raise RuntimeError("S3 source must be a zip file with scheme zip+s3://.")
+        filename = path / get_filename_from_uri(source)
         bucket, key = get_bucket_and_key(source)
         get_s3_source(bucket, key, filename)
         extract_archive(path, filename)
