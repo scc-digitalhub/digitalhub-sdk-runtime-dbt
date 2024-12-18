@@ -213,13 +213,13 @@ def save_function_source(path: Path, source_spec: dict) -> str:
 
     # Http(s) or s3 presigned urls
     elif has_remote_scheme(source):
+        filename = path / get_filename_from_uri(source)
         if has_zip_scheme(source):
-            filename = path / get_filename_from_uri(source)
-            source = source.removeprefix("zip+")
+            requests_chunk_download(source.removeprefix("zip+"), filename)
+            extract_archive(path, filename)
+            filename.unlink()
         else:
-            filename = path / "archive.zip"
-        requests_chunk_download(source, filename)
-        extract_archive(path, filename)
+            requests_chunk_download(source, filename)
 
     # S3 path
     elif has_s3_scheme(source):
@@ -229,6 +229,7 @@ def save_function_source(path: Path, source_spec: dict) -> str:
         bucket, key = get_bucket_and_key(source)
         get_s3_source(bucket, key, filename)
         extract_archive(path, filename)
+        filename.unlink()
 
     if handler is not None:
         return (path / handler).read_text()
