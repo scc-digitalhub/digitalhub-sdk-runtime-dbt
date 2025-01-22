@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.factory.api import build_entity_from_params
-from digitalhub.utils.data_utils import build_data_preview, get_data_preview
+from digitalhub.utils.data_utils import build_data_preview, get_data_preview, check_preview_size
 from digitalhub.utils.logger import LOGGER
 from psycopg2 import sql
 
@@ -294,7 +294,8 @@ def _get_data_preview(columns: tuple, data: list[tuple], rows_count: int) -> lis
     try:
         columns = [i.name for i in columns]
         preview = get_data_preview(columns, data)
-        return build_data_preview(preview, rows_count)
+        built = build_data_preview(preview, rows_count)
+        return check_preview_size(built)
     except Exception as e:
         msg = f"Something got wrong during data preview creation. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
