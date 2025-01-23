@@ -5,8 +5,8 @@ from dataclasses import dataclass
 
 from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
+from digitalhub.entities.dataitem.table.utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
 from digitalhub.factory.api import build_entity_from_params
-from digitalhub.utils.data_utils import build_data_preview, get_data_preview, check_preview_size
 from digitalhub.utils.logger import LOGGER
 from psycopg2 import sql
 
@@ -14,7 +14,7 @@ from digitalhub_runtime_dbt.utils.env import get_connection
 
 if typing.TYPE_CHECKING:
     from dbt.contracts.results import RunResult
-    from digitalhub.entities.dataitem._base.entity import Dataitem
+    from digitalhub.entities.dataitem.table.entity import DataitemTable
 
 
 # Postgres type mapper to frictionless types.
@@ -156,7 +156,7 @@ def get_path(result: RunResult) -> str:
         raise RuntimeError(msg) from e
 
 
-def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: str) -> Dataitem:
+def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: str) -> DataitemTable:
     """
     Create new dataitem.
 
@@ -293,22 +293,23 @@ def _get_data_preview(columns: tuple, data: list[tuple], rows_count: int) -> lis
     """
     try:
         columns = [i.name for i in columns]
-        preview = get_data_preview(columns, data)
-        built = build_data_preview(preview, rows_count)
-        return check_preview_size(built)
+        prepared_data = prepare_data(data)
+        preview = prepare_preview(columns, prepared_data)
+        finalized = finalize_preview(preview, rows_count)
+        return check_preview_size(finalized)
     except Exception as e:
         msg = f"Something got wrong during data preview creation. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg) from e
 
 
-def build_status(dataitem: Dataitem, results: dbtRunnerResult, output_table: str) -> dict:
+def build_status(dataitem: DataitemTable, results: dbtRunnerResult, output_table: str) -> dict:
     """
     Build status.
 
     Parameters
     ----------
-    dataitem : Dataitem
+    dataitem : DataitemTable
         The dataitem output.
     results : dbtRunnerResult
         The dbt results.
