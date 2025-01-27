@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from digitalhub.stores.s3.utils import get_bucket_and_key, get_s3_source
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
 from digitalhub.utils.logger import LOGGER
-from digitalhub.utils.s3_utils import get_bucket_and_key, get_s3_source
 from digitalhub.utils.uri_utils import (
     get_filename_from_uri,
     has_git_scheme,
