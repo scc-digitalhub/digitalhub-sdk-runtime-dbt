@@ -5,12 +5,12 @@ import os
 import psycopg2
 from digitalhub.utils.logger import LOGGER
 
-POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
-POSTGRES_DATABASE = os.getenv("POSTGRES_DATABASE")
-POSTGRES_SCHEMA = os.getenv("POSTGRES_SCHEMA", "public")
+POSTGRES_HOST = os.getenv("DB_HOST")
+POSTGRES_USER = os.getenv("DB_USER")
+POSTGRES_PASSWORD = os.getenv("DB_PASSWORD")
+POSTGRES_PORT = os.getenv("DB_PORT")
+POSTGRES_DATABASE = os.getenv("DB_DATABASE")
+POSTGRES_SCHEMA = os.getenv("DB_SCHEMA", "public")
 
 
 def get_connection() -> psycopg2.extensions.connection:
