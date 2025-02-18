@@ -28,6 +28,9 @@ local = [
     "dbt-postgres<1.9",
     "dbt-adapters==1.1.1",
 ]
+dev = [
+    "digitalhub[dev]>=0.10.0b, <0.11"
+]
 
 [project.urls]
 Homepage = "https://github.com/scc-digitalhub/digitalhub-sdk"
