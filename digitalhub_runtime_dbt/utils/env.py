@@ -3,14 +3,15 @@ from __future__ import annotations
 import os
 
 import psycopg2
+from digitalhub.stores.sql.enums import SqlStoreEnv
 from digitalhub.utils.logger import LOGGER
 
-POSTGRES_HOST = os.getenv("DB_HOST")
-POSTGRES_USER = os.getenv("DB_USER")
-POSTGRES_PASSWORD = os.getenv("DB_PASSWORD")
-POSTGRES_PORT = os.getenv("DB_PORT")
-POSTGRES_DATABASE = os.getenv("DB_DATABASE")
-POSTGRES_SCHEMA = os.getenv("DB_SCHEMA", "public")
+POSTGRES_HOST = os.getenv(SqlStoreEnv.HOST.value)
+POSTGRES_USER = os.getenv(SqlStoreEnv.USERNAME.value)
+POSTGRES_PASSWORD = os.getenv(SqlStoreEnv.PASSWORD.value)
+POSTGRES_PORT = os.getenv(SqlStoreEnv.PORT.value)
+POSTGRES_DATABASE = os.getenv(SqlStoreEnv.DATABASE.value)
+POSTGRES_SCHEMA = os.getenv(SqlStoreEnv.PG_SCHEMA.value, "public")
 
 
 def get_connection() -> psycopg2.extensions.connection:
