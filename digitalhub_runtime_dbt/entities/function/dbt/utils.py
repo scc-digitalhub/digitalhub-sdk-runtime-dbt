@@ -3,8 +3,8 @@ from __future__ import annotations
 import typing
 from pathlib import Path
 
-from digitalhub.stores.api import get_store
-from digitalhub.stores.s3.utils import get_s3_bucket_from_env
+from digitalhub.stores.data.api import get_store
+from digitalhub.stores.data.s3.utils import get_s3_bucket_from_env
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_text_type, eval_zip_type
 from digitalhub.utils.generic_utils import encode_source, encode_string
