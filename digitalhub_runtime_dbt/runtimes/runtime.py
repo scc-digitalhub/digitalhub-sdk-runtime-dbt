@@ -5,7 +5,7 @@ from typing import Callable
 
 from digitalhub.context.api import get_context
 from digitalhub.entities._base.entity._constructors.uuid import build_uuid
-from digitalhub.factory.api import build_entity_from_dict
+from digitalhub.factory.factory import factory
 from digitalhub.runtimes._base import Runtime
 from digitalhub.utils.logger import LOGGER
 
@@ -154,7 +154,7 @@ class RuntimeDbt(Runtime):
         """
         # Collect input dataitems
         for param, di in spec.get("inputs", {}).items():
-            di = build_entity_from_dict(di)
+            di = factory.build_entity_from_dict(di)
 
             # Register dataitem in a dict to be used for inputs confs generation
             self._input_dataitems.append({"name": param, "id": di.id})
