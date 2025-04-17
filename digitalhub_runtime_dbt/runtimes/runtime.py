@@ -230,11 +230,7 @@ class RuntimeDbt(Runtime):
         output_table: str,
         project: str,
         run_key: str,
-        host: str,
-        port: str,
-        user: str,
-        password: str,
-        db: str,
+        configurator: CredsConfigurator,
     ) -> Dataitem:
         """
         Collect outputs.
@@ -249,16 +245,8 @@ class RuntimeDbt(Runtime):
             The project name.
         run_key : str
             The run key.
-        host : str
-            The host.
-        port : str
-            The port.
-        user : str
-            The user.
-        password : str
-            The password.
-        db : str
-            The database.
+        configurator : CredsConfigurator
+            Creds configurator.
 
         Returns
         -------
@@ -266,17 +254,7 @@ class RuntimeDbt(Runtime):
             The output dataitem table.
         """
         parsed_result = parse_results(results, output_table, project)
-        return create_dataitem_(
-            parsed_result,
-            project,
-            self.uuid,
-            run_key,
-            host,
-            port,
-            user,
-            password,
-            db,
-        )
+        return create_dataitem_(parsed_result, project, self.uuid, run_key, configurator)
 
     ##############################
     # Cleanup
