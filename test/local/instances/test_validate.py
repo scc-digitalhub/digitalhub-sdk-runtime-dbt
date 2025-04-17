@@ -46,7 +46,7 @@ def is_valid(built, kind):
         schema = json.load(schema_file)
 
     # To validate all the properties
-    schema["required"] = [a for a in  list(schema['properties'].keys())]
+    schema["required"] = [a for a in list(schema["properties"].keys())]
     validate(instance=built, schema=schema)
     return True
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from dataclasses import dataclass
 
+import psycopg2
 from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.entities.dataitem.table.utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
@@ -10,11 +11,13 @@ from digitalhub.factory.factory import factory
 from digitalhub.utils.logger import LOGGER
 from psycopg2 import sql
 
-from digitalhub_runtime_dbt.utils.env import get_connection
+from digitalhub_runtime_dbt.utils.configuration import get_connection
 
 if typing.TYPE_CHECKING:
     from dbt.contracts.results import RunResult
     from digitalhub.entities.dataitem.table.entity import DataitemTable
+
+    from digitalhub_runtime_dbt.utils.configuration import CredsConfigurator
 
 
 # Postgres type mapper to frictionless types.
@@ -156,7 +159,13 @@ def get_path(result: RunResult) -> str:
         raise RuntimeError(msg) from e
 
 
-def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: str) -> DataitemTable:
+def create_dataitem_(
+    result: ParsedResults,
+    project: str,
+    uuid: str,
+    run_key: str,
+    configurator: CredsConfigurator,
+) -> DataitemTable:
     """
     Create new dataitem.
 
@@ -170,6 +179,8 @@ def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: st
         The uuid of the model for outputs versioning.
     run_key : str
         The run key.
+    configurator : CredsConfigurator
+        Creds configurator.
 
     Returns
     -------
@@ -183,7 +194,8 @@ def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: st
     """
     try:
         # Get columns and data sample from dbt results
-        columns, data, rows_count = get_data_sample(result.name, uuid)
+        conn = get_connection(configurator)
+        columns, data, rows_count = get_data_sample(result.name, uuid, conn)
 
         # Prepare dataitem kwargs
         kwargs = {}
@@ -214,7 +226,11 @@ def create_dataitem_(result: ParsedResults, project: str, uuid: str, run_key: st
         raise RuntimeError(msg) from e
 
 
-def get_data_sample(table_name: str, uuid: str) -> None:
+def get_data_sample(
+    table_name: str,
+    uuid: str,
+    connection: psycopg2.extensions.connection,
+) -> None:
     """
     Get columns and data sample from dbt results.
 
@@ -224,6 +240,8 @@ def get_data_sample(table_name: str, uuid: str) -> None:
         The output table name.
     uuid : str
         The uuid of the model for outputs versioning.
+    conn : connection
+        The connection to postgres.
 
     Returns
     -------
@@ -231,7 +249,6 @@ def get_data_sample(table_name: str, uuid: str) -> None:
     """
     LOGGER.info("Getting columns and data sample from dbt results.")
     try:
-        connection = get_connection()
         query_sample = sql.SQL("SELECT * FROM {table} LIMIT 10;").format(table=sql.Identifier(f"{table_name}_v{uuid}"))
         query_count = sql.SQL("SELECT count(*) FROM {table};").format(table=sql.Identifier(f"{table_name}_v{uuid}"))
         with connection:

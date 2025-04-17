@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+import shutil
+import typing
 from pathlib import Path
 
+import psycopg2
+from digitalhub.stores.data.api import get_store
 from digitalhub.stores.data.s3.utils import get_bucket_and_key, get_s3_source
+from digitalhub.stores.data.sql.enums import SqlStoreEnv
+from digitalhub.utils.exceptions import StoreError
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
 from digitalhub.utils.logger import LOGGER
@@ -13,15 +19,10 @@ from digitalhub.utils.uri_utils import (
     has_s3_scheme,
     has_zip_scheme,
 )
+from psycopg2 import sql
 
-from digitalhub_runtime_dbt.utils.env import (
-    POSTGRES_DATABASE,
-    POSTGRES_HOST,
-    POSTGRES_PASSWORD,
-    POSTGRES_PORT,
-    POSTGRES_SCHEMA,
-    POSTGRES_USER,
-)
+if typing.TYPE_CHECKING:
+    from digitalhub.stores.data.sql.configurator import SqlStoreConfigurator
 
 ##############################
 # Templates
@@ -50,33 +51,44 @@ models:
     "\n"
 )
 
-PROFILE_TEMPLATE = f"""
+PROFILE_TEMPLATE = """
 postgres:
     outputs:
         dev:
             type: postgres
-            host: "{POSTGRES_HOST}"
-            user: "{POSTGRES_USER}"
-            pass: "{POSTGRES_PASSWORD}"
-            port: {POSTGRES_PORT}
-            dbname: "{POSTGRES_DATABASE}"
-            schema: "{POSTGRES_SCHEMA}"
+            host: "{}"
+            user: "{}"
+            pass: "{}"
+            port: {}
+            dbname: "{}"
+            schema: "public"
     target: dev
 """.lstrip(
     "\n"
 )
 
 
-def generate_dbt_profile_yml(root: Path) -> None:
+def generate_dbt_profile_yml(
+    root: Path,
+    configurator: CredsConfigurator,
+) -> None:
     """
     Create dbt profiles.yml
+
+    Parameters
+    ----------
+    root : Path
+        The root path.
+    configurator : CredsConfigurator
+        The configurator.
 
     Returns
     -------
     None
     """
     profiles_path = root / "profiles.yml"
-    profiles_path.write_text(PROFILE_TEMPLATE)
+    host, port, user, password, db = configurator.get_creds()
+    profiles_path.write_text(PROFILE_TEMPLATE.format(host, user, password, int(port), db))
 
 
 def generate_dbt_project_yml(root: Path, model_dir: Path, project: str) -> None:
@@ -145,6 +157,11 @@ def generate_inputs_conf(model_dir: Path, name: str, uuid: str) -> None:
     sql_path.write_text(f'SELECT * FROM "{name}_v{uuid}"')
 
 
+##############################
+# Utils
+##############################
+
+
 def get_output_table_name(outputs: list[dict]) -> str:
     """
     Get output table name from run spec.
@@ -174,6 +191,11 @@ def get_output_table_name(outputs: list[dict]) -> str:
         msg = f"Must pass reference to 'output_table'. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg) from e
+
+
+##############################
+# Source
+##############################
 
 
 def save_function_source(path: Path, source_spec: dict) -> str:
@@ -236,3 +258,169 @@ def save_function_source(path: Path, source_spec: dict) -> str:
 
     # Unsupported scheme
     raise RuntimeError("Unable to collect source.")
+
+
+##############################
+# Creds configurator
+##############################
+
+
+class CredsConfigurator:
+    def __init__(self, project: str) -> None:
+        self.cfg: SqlStoreConfigurator = get_store(project, "sql://")._configurator
+        self._stored_creds = False
+        self._creds: tuple | None = None
+
+    def _store_creds(self) -> tuple:
+        """
+        Get database credentials.
+
+        Returns
+        -------
+        tuple
+            Database credentials tuple (host, port, user, password, database).
+        """
+        creds = self.cfg._get_env_config()
+        try:
+            self._check_credentials(creds)
+        except StoreError:
+            creds = self.cfg._get_file_config()
+            self._check_credentials(creds)
+        self._stored_creds = True
+        return (
+            creds[SqlStoreEnv.HOST.value],
+            creds[SqlStoreEnv.PORT.value],
+            creds[SqlStoreEnv.USERNAME.value],
+            creds[SqlStoreEnv.PASSWORD.value],
+            creds[SqlStoreEnv.DATABASE.value],
+        )
+
+    def _check_credentials(self, creds: dict):
+        """
+        Check database credentials.
+
+        Parameters
+        ----------
+        creds : dict
+            Database credentials.
+
+        Raises
+        ------
+        StoreError
+            If credentials are missing.
+        """
+        for _, v in creds.items():
+            if v is None:
+                raise StoreError
+
+    def get_creds(self) -> tuple:
+        """
+        Get database credentials.
+
+        Returns
+        -------
+        tuple
+            Database credentials tuple (host, port, user, password, database).
+        """
+        if not self._stored_creds:
+            self._creds = self._store_creds()
+        return self._creds
+
+    def get_database(self) -> str:
+        """
+        Get database name.
+
+        Returns
+        -------
+        str
+            Database name.
+        """
+        return self.get_creds()[4]
+
+
+##############################
+# Engine
+##############################
+
+
+def get_connection(
+    configurator: CredsConfigurator,
+) -> psycopg2.extensions.connection:
+    """
+    Create a connection to postgres and return a session with autocommit enabled.
+
+    Parameters
+    ----------
+    configurator : CredsConfigurator
+        Creds configurator.
+
+    Returns
+    -------
+    psycopg2.extensions.connection
+        The connection to postgres.
+
+    Raises
+    ------
+    RuntimeError
+        If something got wrong during connection to postgres.
+    """
+    host, port, user, password, db = configurator.get_creds()
+    try:
+        LOGGER.info("Connecting to postgres.")
+        return psycopg2.connect(
+            host=host,
+            port=port,
+            database=db,
+            user=user,
+            password=password,
+        )
+    except Exception as e:
+        msg = f"Something got wrong during connection to postgres. Exception: {e.__class__}. Error: {e.args}"
+        LOGGER.exception(msg)
+        raise RuntimeError(msg) from e
+
+
+##############################
+# Cleanup
+##############################
+
+
+def cleanup(
+    tables: list[str],
+    tmp_dir: Path,
+    configurator: CredsConfigurator,
+) -> None:
+    """
+    Cleanup environment.
+
+    Parameters
+    ----------
+    tables : list[str]
+        List of tables to delete.
+    tmp_dir : Path
+        The temporary directory.
+    configurator : CredsConfigurator
+        Creds configurator.
+
+    Returns
+    -------
+    None
+    """
+    try:
+        connection = get_connection(configurator)
+        with connection:
+            with connection.cursor() as cursor:
+                for table in tables:
+                    LOGGER.info(f"Dropping table '{table}'.")
+                    query = sql.SQL("DROP TABLE {table}").format(table=sql.Identifier(table))
+                    cursor.execute(query)
+    except Exception as e:
+        msg = f"Something got wrong during environment cleanup. Exception: {e.__class__}. Error: {e.args}"
+        LOGGER.exception(msg)
+        raise RuntimeError(msg) from e
+    finally:
+        LOGGER.info("Closing connection to postgres.")
+        connection.close()
+
+    LOGGER.info("Removing temporary directory.")
+    shutil.rmtree(tmp_dir, ignore_errors=True)
