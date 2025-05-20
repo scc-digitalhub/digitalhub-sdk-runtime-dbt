@@ -70,7 +70,7 @@ class RunDbtRun(Run):
             Inputs.
         """
         inputs = {}
-        if self.inputs is None:
+        if self.spec.inputs is None:
             return inputs
 
         for parameter, key in self.spec.inputs.items():
