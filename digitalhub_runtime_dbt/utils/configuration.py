@@ -309,9 +309,9 @@ class CredsConfigurator:
         StoreError
             If credentials are missing.
         """
-        for _, v in creds.items():
+        for k, v in creds.items():
             if v is None:
-                raise StoreError
+                raise StoreError(f"Missing database credential: {k}.")
 
     def get_creds(self) -> tuple:
         """
