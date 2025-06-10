@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+
 from __future__ import annotations
 
 from digitalhub.entities.function._base.builder import FunctionBuilder
