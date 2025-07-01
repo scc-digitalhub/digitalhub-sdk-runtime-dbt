@@ -7,8 +7,7 @@ from __future__ import annotations
 import typing
 from pathlib import Path
 
-from digitalhub.stores.data.api import get_store
-from digitalhub.stores.data.utils import get_default_store
+from digitalhub.stores.data.api import get_default_store, get_store
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_text_type, eval_zip_type
 from digitalhub.utils.generic_utils import encode_string, read_source
