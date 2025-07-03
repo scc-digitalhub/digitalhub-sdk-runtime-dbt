@@ -11,8 +11,7 @@ from pathlib import Path
 import psycopg2
 from digitalhub.stores.data.api import get_store
 from digitalhub.stores.data.s3.utils import get_bucket_and_key, get_s3_source
-from digitalhub.stores.data.sql.enums import SqlStoreEnv
-from digitalhub.utils.exceptions import StoreError
+from digitalhub.stores.credentials.enums import CredsEnvVar, CredsOrigin
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
 from digitalhub.utils.logger import LOGGER
@@ -272,75 +271,58 @@ def save_function_source(path: Path, source_spec: dict) -> str:
 class CredsConfigurator:
     def __init__(self, project: str) -> None:
         self.cfg: SqlStoreConfigurator = get_store(project, "sql://")._configurator
-        self._stored_creds = False
-        self._creds: tuple | None = None
+        self._valid_creds = None  # cache of valid creds
 
-    def _store_creds(self) -> tuple:
-        """
-        Get database credentials.
-
-        Returns
-        -------
-        tuple
-            Database credentials tuple (host, port, user, password, database).
-        """
-        creds = self.cfg._get_env_config()
+    def _test_connection(self, creds: tuple) -> bool:
+        host, port, user, password, db = creds
         try:
-            self._check_credentials(creds)
-        except StoreError:
-            creds = self.cfg._get_file_config()
-            self._check_credentials(creds)
-        self._stored_creds = True
-        return (
-            creds[SqlStoreEnv.HOST.value],
-            creds[SqlStoreEnv.PORT.value],
-            creds[SqlStoreEnv.USERNAME.value],
-            creds[SqlStoreEnv.PASSWORD.value],
-            creds[SqlStoreEnv.DATABASE.value],
-        )
-
-    def _check_credentials(self, creds: dict):
-        """
-        Check database credentials.
-
-        Parameters
-        ----------
-        creds : dict
-            Database credentials.
-
-        Raises
-        ------
-        StoreError
-            If credentials are missing.
-        """
-        for k, v in creds.items():
-            if v is None:
-                raise StoreError(f"Missing database credential: {k}.")
+            conn = psycopg2.connect(
+                host=host,
+                port=port,
+                database=db,
+                user=user,
+                password=password,
+            )
+            conn.close()
+            return True
+        except Exception:
+            return False
 
     def get_creds(self) -> tuple:
         """
-        Get database credentials.
+        Get valid database credentials (ENV first, then FILE).
 
         Returns
         -------
         tuple
             Database credentials tuple (host, port, user, password, database).
+
+        Raises
+        ------
+        RuntimeError
+            If no valid credentials are found.
         """
-        if not self._stored_creds:
-            self._creds = self._store_creds()
-        return self._creds
+        if self._valid_creds is not None:
+            return self._valid_creds
+
+        for origin in (CredsOrigin.ENV.value, CredsOrigin.FILE.value):
+            creds_dict = self.cfg.get_credentials(origin)
+            creds = (
+                creds_dict[CredsEnvVar.DB_HOST.value],
+                creds_dict[CredsEnvVar.DB_PORT.value],
+                creds_dict[CredsEnvVar.DB_USERNAME.value],
+                creds_dict[CredsEnvVar.DB_PASSWORD.value],
+                creds_dict[CredsEnvVar.DB_DATABASE.value],
+            )
+            if self._test_connection(creds):
+                self._valid_creds = creds
+                return creds
+
+        raise RuntimeError("Unable to find valid database credentials (ENV or FILE).")
 
     def get_database(self) -> str:
-        """
-        Get database name.
-
-        Returns
-        -------
-        str
-            Database name.
-        """
-        return self.get_creds()[4]
-
+        creds = self.get_creds()
+        return creds[4]
 
 ##############################
 # Engine
@@ -370,7 +352,6 @@ def get_connection(
     """
     host, port, user, password, db = configurator.get_creds()
     try:
-        LOGGER.info("Connecting to postgres.")
         return psycopg2.connect(
             host=host,
             port=port,
@@ -379,10 +360,9 @@ def get_connection(
             password=password,
         )
     except Exception as e:
-        msg = f"Something got wrong during connection to postgres. Exception: {e.__class__}. Error: {e.args}"
+        msg = f"Unable to connect to postgres with validated credentials. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg) from e
-
 
 ##############################
 # Cleanup
