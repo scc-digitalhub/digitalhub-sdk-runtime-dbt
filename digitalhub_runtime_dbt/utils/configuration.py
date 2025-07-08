@@ -9,9 +9,9 @@ import typing
 from pathlib import Path
 
 import psycopg2
+from digitalhub.stores.credentials.enums import CredsEnvVar, CredsOrigin
 from digitalhub.stores.data.api import get_store
 from digitalhub.stores.data.s3.utils import get_bucket_and_key, get_s3_source
-from digitalhub.stores.credentials.enums import CredsEnvVar, CredsOrigin
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
 from digitalhub.utils.logger import LOGGER
@@ -324,6 +324,7 @@ class CredsConfigurator:
         creds = self.get_creds()
         return creds[4]
 
+
 ##############################
 # Engine
 ##############################
@@ -363,6 +364,7 @@ def get_connection(
         msg = f"Unable to connect to postgres with validated credentials. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
         raise RuntimeError(msg) from e
+
 
 ##############################
 # Cleanup
