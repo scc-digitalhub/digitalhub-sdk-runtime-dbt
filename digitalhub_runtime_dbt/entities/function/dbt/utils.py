@@ -137,7 +137,7 @@ def source_post_check(exec: FunctionDbt) -> FunctionDbt:
         elif eval_zip_type(code_src):
             filename = Path(code_src).name
             dst = f"zip+{get_default_store(exec.project)}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
-            get_store(exec.project, dst).upload(code_src, dst)
+            get_store(dst).upload(code_src, dst)
             exec.spec.source["source"] = dst
             if exec.spec.source.get("handler") is None:
                 raise EntityError("Handler must be provided.")

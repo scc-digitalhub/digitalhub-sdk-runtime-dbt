@@ -270,7 +270,7 @@ def save_function_source(path: Path, source_spec: dict) -> str:
 
 class CredsConfigurator:
     def __init__(self, project: str) -> None:
-        self.cfg: SqlStoreConfigurator = get_store(project, "sql://")._configurator
+        self.cfg: SqlStoreConfigurator = get_store("sql://")._configurator
         self._valid_creds = None  # cache of valid creds
 
     def _test_connection(self, creds: tuple) -> bool:
