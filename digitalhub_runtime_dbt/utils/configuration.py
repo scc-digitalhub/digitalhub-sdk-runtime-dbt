@@ -324,6 +324,7 @@ class CredsConfigurator:
     _valid_creds : tuple or None
         Cached valid database credentials to avoid repeated validation.
     """
+
     def __init__(self) -> None:
         self.cfg: SqlStoreConfigurator = get_store("sql://")._configurator
         self._valid_creds = None  # cache of valid creds
