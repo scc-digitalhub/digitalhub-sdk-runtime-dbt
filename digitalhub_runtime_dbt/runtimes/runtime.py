@@ -103,7 +103,7 @@ class RuntimeDbt(Runtime):
         run_key = run.get("key")
 
         LOGGER.info("Initializing environment.")
-        configurator = CredsConfigurator(project)
+        configurator = CredsConfigurator()
         _ = configurator.get_creds()
 
         LOGGER.info("Collecting inputs.")
