@@ -8,7 +8,7 @@ import typing
 from typing import Callable
 
 from digitalhub.context.api import get_context
-from digitalhub.entities._base.entity._constructors.uuid import build_uuid
+from digitalhub.entities._constructors.uuid import build_uuid
 from digitalhub.factory.factory import factory
 from digitalhub.runtimes._base import Runtime
 from digitalhub.utils.logger import LOGGER
