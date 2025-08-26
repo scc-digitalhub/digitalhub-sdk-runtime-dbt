@@ -13,7 +13,7 @@ from digitalhub.factory.factory import factory
 from digitalhub.runtimes._base import Runtime
 from digitalhub.utils.logger import LOGGER
 
-from digitalhub_runtime_dbt.entities._commons.enums import TaskActions
+from digitalhub_runtime_dbt.entities._commons.enums import Actions
 from digitalhub_runtime_dbt.utils.configuration import (
     CredsConfigurator,
     cleanup,
@@ -140,7 +140,7 @@ class RuntimeDbt(Runtime):
         Callable
             Function to execute.
         """
-        if action == TaskActions.TRANSFORM.value:
+        if action == Actions.TRANSFORM.value:
             return transform
         raise NotImplementedError
 
