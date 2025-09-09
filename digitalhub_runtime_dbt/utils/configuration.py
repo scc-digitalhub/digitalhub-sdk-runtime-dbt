@@ -11,7 +11,6 @@ from pathlib import Path
 import psycopg2
 from digitalhub.stores.credentials.enums import CredsEnvVar
 from digitalhub.stores.data.api import get_store
-from digitalhub.stores.data.s3.utils import get_bucket_and_key, get_s3_source
 from digitalhub.utils.exceptions import ConfigError
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
@@ -292,8 +291,8 @@ def save_function_source(path: Path, source_spec: dict) -> str:
         if not has_zip_scheme(source):
             raise RuntimeError("S3 source must be a zip file with scheme zip+s3://.")
         filename = path / get_filename_from_uri(source)
-        bucket, key = get_bucket_and_key(source)
-        get_s3_source(bucket, key, filename)
+        store = get_store(source.removeprefix("zip+"))
+        store.get_s3_source(source, filename)
         extract_archive(path, filename)
         filename.unlink()
 
