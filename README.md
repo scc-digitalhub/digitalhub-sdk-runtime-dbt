@@ -5,7 +5,7 @@
 
 The Digitalhub SDK Runtime Dbt is a runtime extension for the [Digitalhub SDK](https://github.com/scc-digitalhub/digitalhub-sdk). It enables you to define execution DBT query on data in the Digitalhub platform.
 
-Explore the full documentation at the [link](https://scc-digitalhub.github.io/sdk-docs/runtimes/dbt/).
+Explore the full documentation at the [link](https://scc-digitalhub.github.io/sdk-docs/reference/runtimes/).
 
 ## Quick start
 
