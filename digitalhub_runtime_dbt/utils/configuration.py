@@ -38,9 +38,7 @@ config-version: 2
 profile: "postgres"
 model-paths: ["{}"]
 models:
-""".lstrip(
-    "\n"
-)
+""".lstrip("\n")
 
 MODEL_TEMPLATE_VERSION = """
 models:
@@ -50,9 +48,7 @@ models:
         - v: {}
           config:
             materialized: table
-""".lstrip(
-    "\n"
-)
+""".lstrip("\n")
 
 PROFILE_TEMPLATE = """
 postgres:
@@ -66,9 +62,7 @@ postgres:
             dbname: "{}"
             schema: "public"
     target: dev
-""".lstrip(
-    "\n"
-)
+""".lstrip("\n")
 
 
 def generate_dbt_profile_yml(
