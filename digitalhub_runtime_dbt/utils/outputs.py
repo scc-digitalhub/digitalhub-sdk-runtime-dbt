@@ -11,7 +11,7 @@ import psycopg2
 from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.entities.dataitem.table.utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
-from digitalhub.factory.factory import factory
+from digitalhub.factory.entity import entity_factory
 from digitalhub.utils.logger import LOGGER
 from psycopg2 import sql
 
@@ -211,7 +211,7 @@ def create_dataitem_(
         kwargs["schema"] = get_schema(columns)
 
         # Create dataitem
-        dataitem = factory.build_entity_from_params(**kwargs)
+        dataitem = entity_factory.build_entity_from_params(**kwargs)
 
         # Update dataitem relationships with run key
         dest = run_key + ":" + run_key.split("/")[-1]
