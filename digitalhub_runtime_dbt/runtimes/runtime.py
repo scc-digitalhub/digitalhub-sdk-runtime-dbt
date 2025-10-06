@@ -158,10 +158,6 @@ class RuntimeDbt(Runtime):
             Run spec dict.
         configurator : CredsConfigurator
             Creds configurator.
-
-        Returns
-        -------
-        None
         """
         # Collect input dataitems
         for param, di in spec.get("inputs", {}).items():
@@ -272,10 +268,6 @@ class RuntimeDbt(Runtime):
         ----------
         configurator : CredsConfigurator
             Creds configurator.
-
-        Returns
-        -------
-        None
         """
         cleanup(
             self._versioned_tables,
