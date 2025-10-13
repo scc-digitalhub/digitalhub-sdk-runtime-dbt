@@ -128,7 +128,10 @@ def source_post_check(exec: FunctionDbt) -> FunctionDbt:
         return exec
 
     # Check local source
-    if has_local_scheme(code_src) and Path(code_src).is_file():
+    if has_local_scheme(code_src):
+        if not Path(code_src).is_file():
+            raise EntityError(f"Source file {code_src} does not exist.")
+
         # Check text
         if eval_text_type(code_src):
             exec.spec.source["base64"] = read_source(code_src)
