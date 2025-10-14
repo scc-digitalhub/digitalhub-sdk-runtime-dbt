@@ -246,10 +246,6 @@ def get_data_sample(
         The uuid of the model for outputs versioning.
     conn : connection
         The connection to postgres.
-
-    Returns
-    -------
-    None
     """
     LOGGER.info("Getting columns and data sample from dbt results.")
     try:

@@ -83,10 +83,6 @@ def generate_dbt_profile_yml(
     configurator : CredsConfigurator
         The credential configurator instance containing database
         connection parameters.
-
-    Returns
-    -------
-    None
     """
     profiles_path = root / "profiles.yml"
     host, port, user, password, db = configurator.get_creds()
@@ -109,10 +105,6 @@ def generate_dbt_project_yml(root: Path, model_dir: Path, project: str) -> None:
         The model directory path whose name will be used in the configuration.
     project : str
         The name of the dbt project to be configured.
-
-    Returns
-    -------
-    None
     """
     project_path = root / "dbt_project.yml"
     project_path.write_text(PROJECT_TEMPLATE.format(project, model_dir.name))
@@ -136,10 +128,6 @@ def generate_outputs_conf(model_dir: Path, sql: str, output: str, uuid: str) -> 
         The name of the output table/model.
     uuid : str
         The unique identifier used for model versioning.
-
-    Returns
-    -------
-    None
     """
     sql_path = model_dir / f"{output}.sql"
     sql_path.write_text(sql)
@@ -164,10 +152,6 @@ def generate_inputs_conf(model_dir: Path, name: str, uuid: str) -> None:
         The name of the input dataitem/table.
     uuid : str
         The unique identifier used for input versioning.
-
-    Returns
-    -------
-    None
     """
     # write schema and version detail for inputs versioning
     input_path = model_dir / f"{name}.yml"
@@ -478,9 +462,6 @@ def cleanup(
     configurator : CredsConfigurator
         The credential configurator for database connection.
 
-    Returns
-    -------
-    None
 
     Raises
     ------
