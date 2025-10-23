@@ -1,7 +1,7 @@
 {
     "id": "0bb7ac49-c27f-4a90-ab76-edd5048b35de",
     "key": "store://demo-etl/run/dbt+run/0bb7ac49-c27f-4a90-ab76-edd5048b35de",
-    "kind": "dbt+run",
+    "kind": "dbt+transform:run",
     "metadata": {
       "name": "0bb7ac49-c27f-4a90-ab76-edd5048b35de",
       "updated_by": "digitalhubdev",
