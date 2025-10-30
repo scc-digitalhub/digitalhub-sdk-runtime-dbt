@@ -9,7 +9,7 @@ import typing
 from pathlib import Path
 
 import psycopg2
-from digitalhub.stores.credentials.enums import CredsEnvVar
+from digitalhub.stores.configurator.enums import ConfigurationVars, CredentialsVars
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.exceptions import ConfigError
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
@@ -303,7 +303,7 @@ class CredsConfigurator:
     """
 
     def __init__(self) -> None:
-        self.cfg: SqlStoreConfigurator = get_store("sql://")._configurator
+        self.cfg: SqlStoreConfigurator = get_store("sql://").configurator  # type: ignore
         self._valid_creds = None  # cache of valid creds
 
     def _test_connection(self, creds: tuple) -> tuple[bool, Exception | None]:
@@ -352,11 +352,11 @@ class CredsConfigurator:
 
         creds_dict = self.cfg.get_sql_credentials()
         creds = (
-            creds_dict[CredsEnvVar.DB_HOST.value],
-            creds_dict[CredsEnvVar.DB_PORT.value],
-            creds_dict[CredsEnvVar.DB_USERNAME.value],
-            creds_dict[CredsEnvVar.DB_PASSWORD.value],
-            creds_dict[CredsEnvVar.DB_DATABASE.value],
+            creds_dict[ConfigurationVars.DB_HOST.value],
+            creds_dict[ConfigurationVars.DB_PORT.value],
+            creds_dict[CredentialsVars.DB_USERNAME.value],
+            creds_dict[CredentialsVars.DB_PASSWORD.value],
+            creds_dict[ConfigurationVars.DB_DATABASE.value],
         )
 
         valid_conn, err = self._test_connection(creds)
