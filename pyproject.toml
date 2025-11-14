@@ -14,15 +14,15 @@ authors = [
 license = { file = "LICENSE" }
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12"
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 keywords = ["data", "dataops", "kubernetes"]
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.10, <3.14"
 dependencies = [
-"digitalhub[pandas]>=0.14.0, <0.15",
+"digitalhub[pandas]>=0.15.0b, <0.16",
 ]
 [project.optional-dependencies]
 local = [
@@ -30,7 +30,7 @@ local = [
     "dbt-adapters==1.1.1",
 ]
 dev = [
-    "digitalhub[dev]>=0.14.0, <0.15"
+    "digitalhub[dev]>=0.15.0b, <0.16"
 ]
 
 [project.urls]
