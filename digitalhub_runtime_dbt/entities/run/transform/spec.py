@@ -49,14 +49,14 @@ class RunValidatorDbtRun(RunValidator):
     """RunValidatorDbtRun validator."""
 
     # Function parameters
-    source: dict = None
+    source: dict | None = None
 
     # Run parameters
-    inputs: dict = None
+    inputs: dict | None = None
     """Run inputs."""
 
-    outputs: dict = None
+    outputs: dict | None = None
     """Run outputs."""
 
-    parameters: dict = None
+    parameters: dict | None = None
     """Run parameters."""
