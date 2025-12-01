@@ -9,7 +9,8 @@ import typing
 from pathlib import Path
 
 import psycopg2
-from digitalhub.stores.configurator.enums import ConfigurationVars, CredentialsVars
+from digitalhub.stores.client.auth.enums import ConfigurationVars, CredentialsVars
+from digitalhub.stores.client.common.api import get_credentials_and_config
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
@@ -24,7 +25,7 @@ from digitalhub.utils.uri_utils import (
 from psycopg2 import sql
 
 if typing.TYPE_CHECKING:
-    from digitalhub.stores.data.sql.store import SqlStore
+    pass
 
 ##############################
 # Templates
@@ -284,10 +285,6 @@ class CredsConfigurator:
     Database credentials configurator for dbt operations.
     """
 
-    def __init__(self) -> None:
-        self.store: SqlStore = get_store("sql://")
-        self.store._check_factory()
-
     def get_creds(self) -> tuple:
         """
         Retrieve and validate database credentials.
@@ -298,7 +295,7 @@ class CredsConfigurator:
             Database credentials tuple containing (host, port, user,
             password, database) in that order.
         """
-        creds_dict = self.store._configurator.get_sql_credentials()
+        creds_dict = get_credentials_and_config()
         return (
             creds_dict[ConfigurationVars.DB_HOST.value],
             creds_dict[ConfigurationVars.DB_PORT.value],
