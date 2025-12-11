@@ -49,7 +49,7 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
         )
         return source_post_check(obj)
 
-    def from_dict(self, obj: dict, validate: bool = True) -> FunctionDbt:
+    def from_dict(self, obj: dict) -> FunctionDbt:
         """
         Create a new object from dictionary.
 
@@ -57,18 +57,16 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
         ----------
         obj : dict
             Dictionary to create object from.
-        validate : bool
-            Flag to indicate if arguments must be validated.
 
         Returns
         -------
         FunctionDbt
             Object instance.
         """
-        entity = super().from_dict(obj, validate=validate)
+        entity = super().from_dict(obj)
         return source_post_check(entity)
 
-    def _parse_dict(self, obj: dict, validate: bool = True) -> dict:
+    def _parse_dict(self, obj: dict) -> dict:
         """
         Get dictionary and parse it to a valid entity dictionary.
 
@@ -91,4 +89,4 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
             if source:
                 spec_dict["source"] = source_check(source=source)["source"]
 
-        return super()._parse_dict(obj, validate=validate)
+        return super()._parse_dict(obj)
