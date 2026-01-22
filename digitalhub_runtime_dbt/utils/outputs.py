@@ -10,8 +10,8 @@ from dataclasses import dataclass
 import psycopg2
 from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
-from digitalhub.entities.dataitem.table.utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
 from digitalhub.factory.entity import entity_factory
+from digitalhub.utils.data_utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
 from digitalhub.utils.logger import LOGGER
 from psycopg2 import sql
 

@@ -38,20 +38,24 @@ def materialize_dataitem(dataitem: DataitemTable, name: str) -> str:
         df = dataitem.as_df()
 
         database = CredsConfigurator().get_database()
+
+        # Table must have underscores to be compatible with DBT
         table_name = f"{name}_v{dataitem.id}"
-        LOGGER.info(f"Creating new dataitem '{table_name}'.")
         materialized_path = f"sql://{database}/public/{table_name}"
+
+        # Backend name must not have underscores
+        dataitem_table_name = table_name.replace("_", "-")
+        LOGGER.info(f"Creating new dataitem '{dataitem_table_name}'.")
         materialized_dataitem: DataitemTable = new_dataitem(
             project=dataitem.project,
-            name=table_name,
+            name=dataitem_table_name,
             kind=EntityKinds.DATAITEM_TABLE.value,
             path=materialized_path,
         )
-
-        LOGGER.info(f"Writing dataframe to dataitem '{table_name}'.")
+        LOGGER.info(f"Writing dataframe to dataitem '{dataitem_table_name}'.")
         materialized_dataitem.write_df(df=df, if_exists="replace")
 
-        return table_name
+        return dataitem_table_name
     except Exception as e:
         msg = f"Something got wrong during dataitem {name} materialization. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
