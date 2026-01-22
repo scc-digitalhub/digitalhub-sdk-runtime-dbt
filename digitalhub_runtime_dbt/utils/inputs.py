@@ -55,7 +55,8 @@ def materialize_dataitem(dataitem: DataitemTable, name: str) -> str:
         LOGGER.info(f"Writing dataframe to dataitem '{dataitem_table_name}'.")
         materialized_dataitem.write_df(df=df, if_exists="replace")
 
-        return dataitem_table_name
+        # Return the table name to drop then
+        return table_name
     except Exception as e:
         msg = f"Something got wrong during dataitem {name} materialization. Exception: {e.__class__}. Error: {e.args}"
         LOGGER.exception(msg)
