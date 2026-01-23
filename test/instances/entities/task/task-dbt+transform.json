@@ -13,12 +13,6 @@
   "name": "8ed8dd0a-379d-40dd-9a68-0c765d6b143e",
   "project": "demo-etl",
   "spec": {
-    "instructions": ["apt-get update"],
-    "priority_class": "test",
-    "runtime_class": "test",
-    "run_as_user": 1000,
-    "tolerations": [],
-    "affinity": {},
     "profile": "1xa100",
     "volumes": [
       {
@@ -44,12 +38,6 @@
         "gpu": "1"
       },
     "secrets": ["secret-key"],
-    "node_selector": [
-      {
-        "key": "node1",
-        "value": "value1"
-      }
-    ],
     "function": "dbt://demo-etl/func1a:bbc4c820-6321-4ea8-b57b-85c472cfde09"
   },
   "status": {
