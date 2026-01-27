@@ -72,8 +72,6 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
 
         Parameters
         ----------
-        entity : str
-            Entity type.
         obj : dict
             Dictionary to parse.
 
