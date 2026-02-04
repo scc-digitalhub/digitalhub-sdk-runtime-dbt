@@ -14,7 +14,6 @@ from digitalhub_runtime_dbt.entities.run.transform.utils import get_getter_for_m
 
 if typing.TYPE_CHECKING:
     from digitalhub.entities._base.material.entity import MaterialEntity
-    from digitalhub.entities._base.metadata.entity import Metadata
 
     from digitalhub_runtime_dbt.entities.run.transform.spec import RunSpecDbtRun
     from digitalhub_runtime_dbt.entities.run.transform.status import RunStatusDbtRun
@@ -25,17 +24,8 @@ class RunDbtRun(Run):
     RunDbtRun class.
     """
 
-    def __init__(
-        self,
-        project: str,
-        uuid: str,
-        kind: str,
-        metadata: Metadata,
-        spec: RunSpecDbtRun,
-        status: RunStatusDbtRun,
-        user: str | None = None,
-    ) -> None:
-        super().__init__(project, uuid, kind, metadata, spec, status, user)
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
         self.spec: RunSpecDbtRun
         self.status: RunStatusDbtRun
