@@ -54,30 +54,6 @@ class RuntimeDbt(Runtime):
         self._input_dataitems: list[dict[str, str]] = []
         self._versioned_tables: list[str] = []
 
-    def build(self, function: dict, task: dict, run: dict) -> dict:
-        """
-        Build run spec.
-
-        Parameters
-        ----------
-        function : dict
-            The function.
-        task : dict
-            The task.
-        run : dict
-            The run.
-
-        Returns
-        -------
-        dict
-            The run spec.
-        """
-        return {
-            **function.get("spec", {}),
-            **task.get("spec", {}),
-            **run.get("spec", {}),
-        }
-
     def run(self, run: dict) -> dict:
         """
         Run function.

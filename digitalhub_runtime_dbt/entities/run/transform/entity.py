@@ -36,7 +36,7 @@ class RunDbtRun(Run):
         """
         self.refresh()
         inputs = self.inputs(as_dict=True)
-        if self.spec.local_execution:
+        if self.local_execution():
             for _, v in inputs.items():
                 self.add_relationship(
                     relation=Relationship.CONSUMES.value,
@@ -44,6 +44,17 @@ class RunDbtRun(Run):
                 )
         self.save(update=True)
         self.spec.inputs = inputs
+
+    def local_execution(self) -> bool:
+        """
+        Check if run has local execution.
+
+        Returns
+        -------
+        bool
+            True if run has local execution, False otherwise.
+        """
+        return self.spec.local_execution
 
     def inputs(self, as_dict: bool = False) -> dict:
         """

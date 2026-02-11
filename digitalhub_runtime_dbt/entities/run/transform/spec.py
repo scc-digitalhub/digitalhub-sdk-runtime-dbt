@@ -13,7 +13,6 @@ class RunSpecDbtRun(RunSpec):
     def __init__(
         self,
         task: str,
-        local_execution: bool = False,
         function: str | None = None,
         workflow: str | None = None,
         volumes: list[dict] | None = None,
@@ -25,11 +24,11 @@ class RunSpecDbtRun(RunSpec):
         inputs: dict | None = None,
         outputs: dict | None = None,
         parameters: dict | None = None,
+        local_execution: bool = False,
         **kwargs,
     ) -> None:
         super().__init__(
             task,
-            local_execution,
             function,
             workflow,
             volumes,
@@ -43,6 +42,7 @@ class RunSpecDbtRun(RunSpec):
         self.inputs = inputs
         self.outputs = outputs
         self.parameters = parameters
+        self.local_execution = local_execution
 
 
 class RunValidatorDbtRun(RunValidator):
@@ -60,3 +60,6 @@ class RunValidatorDbtRun(RunValidator):
 
     parameters: dict | None = None
     """Run parameters."""
+
+    local_execution: bool = False
+    """Whether to execute the run locally instead of in the cluster."""
