@@ -12,7 +12,7 @@ from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.factory.entity import entity_factory
 from digitalhub.utils.data_utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 from psycopg2 import sql
 
 from digitalhub_runtime_dbt.utils.configuration import get_connection
@@ -21,6 +21,7 @@ if typing.TYPE_CHECKING:
     from dbt.contracts.results import RunResult
     from digitalhub.entities.dataitem.table.entity import DataitemTable
 
+logger = get_logger(__file__)
 
 # Postgres type mapper to frictionless types.
 TYPE_MAPPER = {
@@ -84,7 +85,7 @@ def parse_results(run_result: dbtRunnerResult, output: str, project: str) -> Par
         return ParsedResults(name, path)
     except Exception as e:
         msg = f"Something got wrong during results parsing. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -116,22 +117,22 @@ def validate_results(run_result: dbtRunnerResult, output: str, project: str) -> 
         result: RunResult = run_result.result[-1]
     except IndexError as e:
         msg = f"No results found. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.error(msg)
+        logger.error(msg)
         raise RuntimeError(msg)
 
     if not result.status.value == "success":
         msg = f"Function execution failed: {result.status.value}."
-        LOGGER.error(msg)
+        logger.error(msg)
         raise RuntimeError(msg)
 
     if not result.node.package_name == project.replace("-", "_"):
         msg = f"Wrong project name. Got {result.node.package_name}, expected {project.replace('-', '_')}."
-        LOGGER.error(msg)
+        logger.error(msg)
         raise RuntimeError(msg)
 
     if not result.node.name == output:
         msg = f"Wrong output name. Got {result.node.name}, expected {output}."
-        LOGGER.error(msg)
+        logger.error(msg)
         raise RuntimeError(msg)
 
     return result
@@ -157,7 +158,7 @@ def get_path(result: RunResult) -> str:
         return f"sql://{components}"
     except Exception as e:
         msg = f"Something got wrong during path parsing. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -221,7 +222,7 @@ def create_dataitem_(
 
     except Exception as e:
         msg = f"Something got wrong during dataitem creation. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -242,7 +243,7 @@ def get_data_sample(
     conn : connection
         The connection to postgres.
     """
-    LOGGER.info("Getting columns and data sample from dbt results.")
+    logger.info("Getting columns and data sample from dbt results.")
     try:
         query_sample = sql.SQL("SELECT * FROM {table} LIMIT 10;").format(table=sql.Identifier(f"{table_name}_v{uuid}"))
         query_count = sql.SQL("SELECT count(*) FROM {table};").format(table=sql.Identifier(f"{table_name}_v{uuid}"))
@@ -256,10 +257,10 @@ def get_data_sample(
         return columns, data, rows_count
     except Exception as e:
         msg = f"Something got wrong during data fetching. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
     finally:
-        LOGGER.info("Closing connection to postgres.")
+        logger.info("Closing connection to postgres.")
         connection.close()
 
 
@@ -281,7 +282,7 @@ def get_schema(columns: tuple) -> list[dict]:
         return {"fields": [{"name": c.name, "type": TYPE_MAPPER.get(c.type_code, "any")} for c in columns]}
     except Exception as e:
         msg = f"Something got wrong during schema parsing. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -311,7 +312,7 @@ def _get_data_preview(columns: tuple, data: list[tuple], rows_count: int) -> lis
         return check_preview_size(finalized)
     except Exception as e:
         msg = f"Something got wrong during data preview creation. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -341,5 +342,5 @@ def build_status(dataitem: DataitemTable, results: dbtRunnerResult, output_table
         }
     except Exception as e:
         msg = f"Something got wrong during status creation. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e

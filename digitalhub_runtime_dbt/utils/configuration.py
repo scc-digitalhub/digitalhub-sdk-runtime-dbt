@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import shutil
-import typing
 from pathlib import Path
 
 import psycopg2
@@ -14,7 +13,7 @@ from digitalhub.stores.client.common.api import get_credentials_and_config
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 from digitalhub.utils.uri_utils import (
     get_filename_from_uri,
     has_git_scheme,
@@ -24,8 +23,7 @@ from digitalhub.utils.uri_utils import (
 )
 from psycopg2 import sql
 
-if typing.TYPE_CHECKING:
-    pass
+logger = get_logger(__file__)
 
 ##############################
 # Templates
@@ -188,11 +186,11 @@ def get_output_table_name(outputs: list[dict]) -> str:
         return outputs["output_table"]
     except IndexError as e:
         msg = f"Outputs must be a list of one dataitem. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
     except KeyError as e:
         msg = f"Must pass reference to 'output_table'. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -342,7 +340,7 @@ def get_connection() -> psycopg2.extensions.connection:
         return psycopg2.connect(host=host, port=port, database=db, user=user, password=password)
     except Exception as e:
         msg = f"Unable to connect to postgres with validated credentials. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
 
 
@@ -371,16 +369,16 @@ def cleanup(tables: list[str], tmp_dir: Path) -> None:
         with connection:
             with connection.cursor() as cursor:
                 for table in tables:
-                    LOGGER.info(f"Dropping table '{table}'.")
+                    logger.info(f"Dropping table '{table}'.")
                     query = sql.SQL("DROP TABLE {table}").format(table=sql.Identifier(table))
                     cursor.execute(query)
     except Exception as e:
         msg = f"Something got wrong during environment cleanup. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise RuntimeError(msg) from e
     finally:
-        LOGGER.info("Closing connection to postgres.")
+        logger.info("Closing connection to postgres.")
         connection.close()
 
-    LOGGER.info("Removing temporary directory.")
+    logger.info("Removing temporary directory.")
     shutil.rmtree(tmp_dir, ignore_errors=True)

@@ -11,7 +11,7 @@ from digitalhub.context.api import get_context
 from digitalhub.entities._constructors.uuid import build_uuid
 from digitalhub.factory.entity import entity_factory
 from digitalhub.runtimes._base import Runtime
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_dbt.entities._commons.enums import Actions
 from digitalhub_runtime_dbt.utils.configuration import (
@@ -30,6 +30,8 @@ from digitalhub_runtime_dbt.utils.outputs import build_status, create_dataitem_,
 if typing.TYPE_CHECKING:
     from dbt.contracts.results import RunResult
     from digitalhub.entities.dataitem._base.entity import Dataitem
+
+logger = get_logger(__file__)
 
 
 class RuntimeDbt(Runtime):
@@ -68,32 +70,32 @@ class RuntimeDbt(Runtime):
         dict
             Status of the executed run.
         """
-        LOGGER.info("Validating task.")
+        logger.info("Validating task.")
         action = self._validate_task(run)
         executable = self._get_executable(action)
 
-        LOGGER.info("Starting task.")
+        logger.info("Starting task.")
         spec = run.get("spec")
         project = run.get("project")
         run_key = run.get("key")
 
-        LOGGER.info("Collecting inputs.")
+        logger.info("Collecting inputs.")
         self._collect_inputs(spec)
 
-        LOGGER.info("Configure execution.")
+        logger.info("Configure execution.")
         output_table = self._configure_execution(spec, project)
 
-        LOGGER.info("Executing run.")
+        logger.info("Executing run.")
         results = self._execute(executable, output_table, self.runtime_dir)
 
-        LOGGER.info("Collecting outputs.")
+        logger.info("Collecting outputs.")
         output = self._collect_outputs(results, output_table, project, run_key)
         status = build_status(output, results, output_table)
 
-        LOGGER.info("Clean up environment.")
+        logger.info("Clean up environment.")
         self._cleanup()
 
-        LOGGER.info("Task completed, returning run status.")
+        logger.info("Task completed, returning run status.")
         return status
 
     @staticmethod

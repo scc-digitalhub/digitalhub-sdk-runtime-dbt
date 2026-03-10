@@ -9,12 +9,14 @@ import typing
 from digitalhub.entities._commons.enums import EntityKinds
 from digitalhub.entities.dataitem.crud import new_dataitem
 from digitalhub.utils.exceptions import EntityError
-from digitalhub.utils.logger import LOGGER
+from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_dbt.utils.configuration import CredsConfigurator
 
 if typing.TYPE_CHECKING:
     from digitalhub.entities.dataitem.table.entity import DataitemTable
+
+logger = get_logger(__file__)
 
 
 def materialize_dataitem(dataitem: DataitemTable, name: str) -> str:
@@ -34,7 +36,7 @@ def materialize_dataitem(dataitem: DataitemTable, name: str) -> str:
         The materialized table name.
     """
     try:
-        LOGGER.info(f"Collecting dataitem '{dataitem.name}' as dataframe.")
+        logger.info(f"Collecting dataitem '{dataitem.name}' as dataframe.")
         df = dataitem.as_df()
 
         database = CredsConfigurator().get_database()
@@ -45,19 +47,19 @@ def materialize_dataitem(dataitem: DataitemTable, name: str) -> str:
 
         # Backend name must not have underscores
         dataitem_table_name = table_name.replace("_", "-")
-        LOGGER.info(f"Creating new dataitem '{dataitem_table_name}'.")
+        logger.info(f"Creating new dataitem '{dataitem_table_name}'.")
         materialized_dataitem: DataitemTable = new_dataitem(
             project=dataitem.project,
             name=dataitem_table_name,
             kind=EntityKinds.DATAITEM_TABLE.value,
             path=materialized_path,
         )
-        LOGGER.info(f"Writing dataframe to dataitem '{dataitem_table_name}'.")
+        logger.info(f"Writing dataframe to dataitem '{dataitem_table_name}'.")
         materialized_dataitem.write_df(df=df, if_exists="replace")
 
         # Return the table name to drop then
         return table_name
     except Exception as e:
         msg = f"Something got wrong during dataitem {name} materialization. Exception: {e.__class__}. Error: {e.args}"
-        LOGGER.exception(msg)
+        logger.exception(msg)
         raise EntityError(msg) from e
