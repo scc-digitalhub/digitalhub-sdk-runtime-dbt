@@ -18,6 +18,7 @@ try:
     runtime_builders = ((kind, RuntimeDbtBuilder) for kind in [e.value for e in EntityKinds])
 except ImportError as e:
     from digitalhub.utils.logger.logger import get_logger
+
     logger = get_logger(__name__)
     logger.debug(f"Error importing runtime builders: {e}")
     runtime_builders = tuple()
