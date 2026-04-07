@@ -7,10 +7,11 @@ from __future__ import annotations
 import typing
 from pathlib import Path
 
-from digitalhub.stores.data.api import get_default_store, get_store
+from digitalhub.entities._commons.utils import build_zip_path
+from digitalhub.stores.data.api import get_store
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.file_utils import eval_text_type, eval_zip_type
-from digitalhub.utils.generic_utils import encode_string, read_source
+from digitalhub.utils.generic_utils import create_archive, encode_string, read_source
 from digitalhub.utils.uri_utils import has_local_scheme
 
 from digitalhub_runtime_dbt.entities.function.dbt.models import Lang
@@ -129,20 +130,28 @@ def source_post_check(exec: FunctionDbt) -> FunctionDbt:
 
     # Check local source
     if has_local_scheme(code_src):
-        if not Path(code_src).is_file():
-            raise EntityError(f"Source file {code_src} does not exist.")
+        path_src = Path(code_src)
 
-        # Check text
+        if not path_src.exists():
+            raise EntityError(f"Source {code_src} does not exist.")
+
+        # If source is a folder, zip it and upload it
+        if not path_src.is_file():
+            archive_path = path_src.parent / f"{path_src.name}.zip"
+            create_archive(path_src, archive_path)
+            dst = build_zip_path(exec, archive_path.name)
+            get_store(dst).upload(str(archive_path), dst)
+            exec.spec.source["source"] = dst
+            archive_path.unlink()
+
+        # If source is a file, read it and encode it in base64
         if eval_text_type(code_src):
             exec.spec.source["base64"] = read_source(code_src)
 
-        # Check zip
+        # If source is a zip file, upload it and update the source
         elif eval_zip_type(code_src):
-            filename = Path(code_src).name
-            dst = f"zip+{get_default_store(exec.project)}/{exec.project}/{exec.ENTITY_TYPE}/{exec.name}/{exec.id}/{filename}"
+            dst = build_zip_path(exec, path_src.name)
             get_store(dst).upload(code_src, dst)
             exec.spec.source["source"] = dst
-            if exec.spec.source.get("handler") is None:
-                raise EntityError("Handler must be provided.")
 
     return exec
