@@ -137,8 +137,7 @@ def source_post_check(exec: FunctionDbt) -> FunctionDbt:
 
         # If source is a folder, zip it and upload it
         if not path_src.is_file():
-            archive_path = path_src.parent / f"{path_src.name}.zip"
-            create_archive(path_src, archive_path)
+            archive_path = create_archive(path_src)
             dst = build_zip_path(exec, archive_path.name)
             get_store(dst).upload(str(archive_path), dst)
             exec.spec.source["source"] = dst
