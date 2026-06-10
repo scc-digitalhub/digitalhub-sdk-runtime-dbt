@@ -23,7 +23,7 @@ classifiers = [
 keywords = ["data", "dataops", "kubernetes"]
 requires-python = ">=3.10, <3.15"
 dependencies = [
-"digitalhub[pandas]>=0.15.0b, <0.16",
+"digitalhub[pandas]>=0.15.1, <0.16",
 ]
 [project.optional-dependencies]
 local = [
@@ -31,7 +31,7 @@ local = [
     "dbt-adapters==1.1.1",
 ]
 dev = [
-    "digitalhub[dev]>=0.15.0b, <0.16"
+    "digitalhub[dev]>=0.15.1, <0.16"
 ]
 
 [project.urls]
