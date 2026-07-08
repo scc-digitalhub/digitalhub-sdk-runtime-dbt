@@ -144,7 +144,7 @@ def source_post_check(exec: FunctionDbt) -> FunctionDbt:
             archive_path.unlink()
 
         # If source is a file, read it and encode it in base64
-        if eval_text_type(code_src):
+        elif eval_text_type(code_src):
             exec.spec.source["base64"] = read_source(code_src)
 
         # If source is a zip file, upload it and update the source
