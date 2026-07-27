@@ -31,6 +31,7 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
         project: str,
         name: str,
         uuid: str | None = None,
+        version: str | None = None,
         description: str | None = None,
         labels: list[str] | None = None,
         embedded: bool = False,
@@ -38,13 +39,14 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
     ) -> FunctionDbt:
         kwargs = source_check(**kwargs)
         obj = super().build(
-            kind,
-            project,
-            name,
-            uuid,
-            description,
-            labels,
-            embedded,
+            kind=kind,
+            project=project,
+            name=name,
+            uuid=uuid,
+            version=version,
+            description=description,
+            labels=labels,
+            embedded=embedded,
             **kwargs,
         )
         return source_post_check(obj)
