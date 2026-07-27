@@ -120,17 +120,17 @@ def validate_results(run_result: dbtRunnerResult, output: str, project: str) -> 
         logger.error(msg)
         raise RuntimeError(msg)
 
-    if not result.status.value == "success":
+    if result.status.value != "success":
         msg = f"Function execution failed: {result.status.value}."
         logger.error(msg)
         raise RuntimeError(msg)
 
-    if not result.node.package_name == project.replace("-", "_"):
+    if result.node.package_name != project.replace("-", "_"):
         msg = f"Wrong project name. Got {result.node.package_name}, expected {project.replace('-', '_')}."
         logger.error(msg)
         raise RuntimeError(msg)
 
-    if not result.node.name == output:
+    if result.node.name != output:
         msg = f"Wrong output name. Got {result.node.name}, expected {output}."
         logger.error(msg)
         raise RuntimeError(msg)

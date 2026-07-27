@@ -8,9 +8,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from jsonschema import ValidationError, validate
-
 from digitalhub.factory.entity import entity_factory
+from jsonschema import ValidationError, validate
 
 ROOT = Path("test/instances")
 ENTITIES_PATH = ROOT / "entities"

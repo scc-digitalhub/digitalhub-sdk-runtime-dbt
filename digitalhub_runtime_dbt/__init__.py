@@ -21,4 +21,4 @@ except ImportError as e:
 
     logger = get_logger(__name__)
     logger.debug(f"Error importing runtime builders: {e}")
-    runtime_builders = tuple()
+    runtime_builders = ()
