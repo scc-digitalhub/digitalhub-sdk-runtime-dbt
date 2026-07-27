@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 from digitalhub.entities._commons.enums import EntityTypes
 from digitalhub.entities.artifact.crud import get_artifact

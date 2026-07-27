@@ -247,13 +247,12 @@ def get_data_sample(
     try:
         query_sample = sql.SQL("SELECT * FROM {table} LIMIT 10;").format(table=sql.Identifier(f"{table_name}_v{uuid}"))
         query_count = sql.SQL("SELECT count(*) FROM {table};").format(table=sql.Identifier(f"{table_name}_v{uuid}"))
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute(query_sample)
-                columns = cursor.description
-                data = cursor.fetchall()
-                cursor.execute(query_count)
-                rows_count = cursor.fetchone()[0]
+        with connection, connection.cursor() as cursor:
+            cursor.execute(query_sample)
+            columns = cursor.description
+            data = cursor.fetchall()
+            cursor.execute(query_count)
+            rows_count = cursor.fetchone()[0]
         return columns, data, rows_count
     except Exception as e:
         msg = f"Something got wrong during data fetching. Exception: {e.__class__}. Error: {e.args}"

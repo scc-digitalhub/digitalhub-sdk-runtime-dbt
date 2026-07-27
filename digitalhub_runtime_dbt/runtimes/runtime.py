@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Callable
+from collections.abc import Callable
 
 from digitalhub.context.api import get_context
 from digitalhub.entities._constructors.uuid import build_uuid

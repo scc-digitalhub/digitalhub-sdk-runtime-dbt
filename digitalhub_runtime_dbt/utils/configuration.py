@@ -366,12 +366,11 @@ def cleanup(tables: list[str], tmp_dir: Path) -> None:
     """
     try:
         connection = get_connection()
-        with connection:
-            with connection.cursor() as cursor:
-                for table in tables:
-                    logger.info(f"Dropping table '{table}'.")
-                    query = sql.SQL("DROP TABLE {table}").format(table=sql.Identifier(table))
-                    cursor.execute(query)
+        with connection, connection.cursor() as cursor:
+            for table in tables:
+                logger.info(f"Dropping table '{table}'.")
+                query = sql.SQL("DROP TABLE {table}").format(table=sql.Identifier(table))
+                cursor.execute(query)
     except Exception as e:
         msg = f"Something got wrong during environment cleanup. Exception: {e.__class__}. Error: {e.args}"
         logger.exception(msg)
