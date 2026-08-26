@@ -13,7 +13,7 @@ from digitalhub.entities.run._base.entity import Run
 from digitalhub_runtime_dbt.entities.run.transform.utils import get_getter_for_material
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.material.entity import MaterialEntity
+    from digitalhub.entities._mixin.material.mixin import MaterialEntity
 
     from digitalhub_runtime_dbt.entities.run.transform.spec import RunSpecDbtRun
     from digitalhub_runtime_dbt.entities.run.transform.status import RunStatusDbtRun
