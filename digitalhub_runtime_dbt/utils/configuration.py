@@ -8,8 +8,8 @@ import shutil
 from pathlib import Path
 
 import psycopg2
-from digitalhub.stores.client.auth.enums import ConfigurationVars, CredentialsVars
 from digitalhub.stores.client.common.api import get_credentials_and_config
+from digitalhub.stores.client.common.enums import ConfigurationVars, CredentialsVars
 from digitalhub.stores.data.api import get_store
 from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
 from digitalhub.utils.git_utils import clone_repository
