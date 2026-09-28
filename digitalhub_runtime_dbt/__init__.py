@@ -9,10 +9,10 @@ entity_builders = tuple((plugin.kind, plugin.builder) for plugin in entity_plugi
 try:
     from digitalhub_runtime_dbt.runtimes.builder import RuntimeDbtBuilder
 
-    runtime_builders = tuple((kind.value, RuntimeDbtBuilder) for kind in EntityKinds)
+    runtime_builders = ((kind.value, RuntimeDbtBuilder) for kind in EntityKinds)
 except ImportError as e:
     from digitalhub.utils.logger.logger import get_logger
 
     logger = get_logger(__name__)
     logger.debug(f"Error importing runtime builders: {e}")
-    runtime_builders = tuple()
+    runtime_builders = ()
