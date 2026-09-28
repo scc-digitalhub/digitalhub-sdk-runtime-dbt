@@ -34,7 +34,14 @@ jobs:
           rm main.zip
           mv digitalhub-core-main/schemas/specs test/instances/schemas
           rm -r digitalhub-core-main
+      - uses: actions/checkout@v4
+        with:
+          repository: scc-digitalhub/digitalhub-sdk
+          ref: main
+          path: digitalhub-sdk
       - name: Test with pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}/digitalhub-sdk/test/_digitalhub_test_helpers
         run: |
           coverage run -m pytest test -v -s
       - name: Generate Coverage Report
