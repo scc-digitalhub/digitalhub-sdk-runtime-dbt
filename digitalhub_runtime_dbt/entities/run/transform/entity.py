@@ -42,7 +42,7 @@ class RunDbtRun(Run):
                     relation=Relationship.CONSUMES.value,
                     dest=v.get("key"),
                 )
-            self.save(update=True)
+            self.update()
         self.spec.inputs = inputs
 
     def local_execution(self) -> bool:
