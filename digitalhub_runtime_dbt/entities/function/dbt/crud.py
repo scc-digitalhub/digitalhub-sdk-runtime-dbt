@@ -28,7 +28,23 @@ def new_function_dbt(
     labels: list[str] | None = None,
     embedded: bool = False,
 ) -> FunctionDbt:
-    """Create a dbt function entity."""
+    """
+    Create a dbt function entity.
+
+    Examples
+    --------
+    Create a dbt function from SQL source:
+
+    ```python
+    import digitalhub as dh
+
+    function = dh.new_function_dbt(
+        project="my-project",
+        name="dbt-transform",
+        code="SELECT 1 AS value",
+    )
+    ```
+    """
     if code is not None and code_src is not None:
         raise ValueError("Only one of 'code' or 'code_src' can be provided.")
 
