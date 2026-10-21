@@ -7,7 +7,7 @@ from __future__ import annotations
 import typing
 
 from digitalhub.entities._commons.enums import EntityKinds
-from digitalhub.entities.dataitem.crud import new_dataitem
+from digitalhub.entities.dataitem._base.crud import new_dataitem
 from digitalhub.utils.exceptions import EntityError
 from digitalhub.utils.logger.logger import get_logger
 
