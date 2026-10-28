@@ -8,7 +8,6 @@ import typing
 from dataclasses import dataclass
 
 import psycopg2
-from dbt.cli.main import dbtRunnerResult
 from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.factory.entity import entity_factory
 from digitalhub.utils.data_utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
@@ -18,6 +17,7 @@ from psycopg2 import sql
 from digitalhub_runtime_dbt.utils.configuration import get_connection
 
 if typing.TYPE_CHECKING:
+    from dbt.cli.main import dbtRunnerResult
     from dbt.contracts.results import RunResult
     from digitalhub.entities.dataitem.table.entity import DataitemTable
 

@@ -1,10 +1,14 @@
 # SPDX-FileCopyrightText: © 2025 DSLab - Fondazione Bruno Kessler
 #
 # SPDX-License-Identifier: Apache-2.0
+from __future__ import annotations
+
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from dbt.cli.main import dbtRunner, dbtRunnerResult
+if TYPE_CHECKING:
+    from dbt.cli.main import dbtRunnerResult
 
 
 def transform(output: str, root: Path) -> dbtRunnerResult:
@@ -22,6 +26,8 @@ def transform(output: str, root: Path) -> dbtRunnerResult:
     dbtRunnerResult
         An object representing the result of the dbt execution.
     """
+    from dbt.cli.main import dbtRunner
+
     current_dir = os.getcwd()
     os.chdir(root)
     dbt = dbtRunner()
