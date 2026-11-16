@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.spec import RunSpec
+from digitalhub.entities.run._base.spec import LocalExecutionSpecMixin, RunSpec
 
 
-class RunSpecDbtRun(RunSpec):
+class RunSpecDbtRun(RunSpec, LocalExecutionSpecMixin):
     """Specification for a dbt transform run."""
 
     source: dict | None = None
@@ -21,5 +21,4 @@ class RunSpecDbtRun(RunSpec):
     parameters: dict | None = None
     """Run parameters."""
 
-    local_execution: bool = False
     """Whether to execute the run locally instead of in the cluster."""

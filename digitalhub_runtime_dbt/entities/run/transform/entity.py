@@ -19,7 +19,10 @@ if typing.TYPE_CHECKING:
     from digitalhub_runtime_dbt.entities.run.transform.status import RunStatusDbtRun
 
 
-class RunDbtRun(Run):
+from digitalhub.entities.run._base.entity import LocalExecutionRunMixin
+
+
+class RunDbtRun(LocalExecutionRunMixin, Run):
     """
     RunDbtRun class.
     """
@@ -44,17 +47,6 @@ class RunDbtRun(Run):
                 )
             self.update()
         self.spec.inputs = inputs
-
-    def local_execution(self) -> bool:
-        """
-        Check if run has local execution.
-
-        Returns
-        -------
-        bool
-            True if run has local execution, False otherwise.
-        """
-        return self.spec.local_execution
 
     def inputs(self, as_dict: bool = False) -> dict:
         """
