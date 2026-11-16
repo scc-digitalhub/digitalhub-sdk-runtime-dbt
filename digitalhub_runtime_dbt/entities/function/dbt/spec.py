@@ -4,25 +4,13 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.function._base.spec import FunctionSpec, FunctionValidator
+from digitalhub.entities.function._base.spec import FunctionSpec
 
 from digitalhub_runtime_dbt.entities.function.dbt.models import SourceValidator
 
 
 class FunctionSpecDbt(FunctionSpec):
-    """
-    FunctionSpecDbt specifications.
-    """
-
-    def __init__(self, source: dict) -> None:
-        super().__init__()
-        self.source = source
-
-
-class FunctionValidatorDbt(FunctionValidator):
-    """
-    FunctionValidatorDbt validator.
-    """
+    """Specification for a dbt function."""
 
     source: SourceValidator
     """Source code."""

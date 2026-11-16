@@ -9,7 +9,7 @@ from digitalhub.entities.function._base.builder import FunctionBuilder
 from digitalhub_runtime_dbt.entities._base.runtime_entity.builder import RuntimeEntityBuilderDbt
 from digitalhub_runtime_dbt.entities._commons.enums import EntityKinds
 from digitalhub_runtime_dbt.entities.function.dbt.entity import FunctionDbt
-from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt, FunctionValidatorDbt
+from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
 from digitalhub_runtime_dbt.entities.function.dbt.status import FunctionStatusDbt
 from digitalhub_runtime_dbt.entities.function.dbt.utils import source_check, source_post_check
 
@@ -21,7 +21,6 @@ class FunctionDbtBuilder(FunctionBuilder, RuntimeEntityBuilderDbt):
 
     ENTITY_CLASS = FunctionDbt
     ENTITY_SPEC_CLASS = FunctionSpecDbt
-    ENTITY_SPEC_VALIDATOR = FunctionValidatorDbt
     ENTITY_STATUS_CLASS = FunctionStatusDbt
     ENTITY_KIND = EntityKinds.FUNCTION_DBT.value
 

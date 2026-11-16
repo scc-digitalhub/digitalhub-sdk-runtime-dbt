@@ -4,14 +4,8 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.task._base.spec import TaskSpecFunction, TaskValidatorFunction
+from digitalhub.entities.task._base.spec import TaskSpecFunction
 
 
 class TaskSpecDbtTransform(TaskSpecFunction):
     """TaskSpecDbtTransform specifications."""
-
-
-class TaskValidatorDbtTransform(TaskValidatorFunction):
-    """
-    TaskValidatorDbtTransform validator.
-    """
