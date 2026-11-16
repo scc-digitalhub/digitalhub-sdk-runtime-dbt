@@ -5,8 +5,10 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import ClassVar
 
-from pydantic import BaseModel, ConfigDict, Field
+from digitalhub.entities._mixin.source.models import HandlerSourceCode
+from pydantic import Field
 
 
 class Lang(Enum):
@@ -18,24 +20,11 @@ class Lang(Enum):
     PYTHON = "python"
 
 
-class SourceValidator(BaseModel):
-    """
-    Source code params.
-    """
+class DbtSourceCode(HandlerSourceCode):
+    """Source code model for dbt functions."""
 
-    model_config = ConfigDict(use_enum_values=True)
-
-    source: str = None
-    "Pointer to source code."
-
-    handler: str = None
-    "Function entrypoint."
-
-    code: str = None
-    "Source code (plain text)."
-
-    base64: str = None
-    "Source code (base64 encoded)."
-
+    DEFAULT_LANG: ClassVar[str | None] = "sql"
     lang: Lang = Field(default=Lang.SQL.value)
-    "Source code language (hint)."
+
+
+SourceValidator = DbtSourceCode

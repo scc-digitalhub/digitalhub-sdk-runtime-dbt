@@ -2,6 +2,7 @@ import pytest
 from digitalhub.entities._constructors.spec import build_spec
 from pydantic import ValidationError
 
+from digitalhub_runtime_dbt.entities.function.dbt.builder import FunctionDbtBuilder
 from digitalhub_runtime_dbt.entities.function.dbt.models import SourceValidator
 from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
 from digitalhub_runtime_dbt.entities.run.transform.spec import RunSpecDbtRun
@@ -16,6 +17,20 @@ def test_dbt_function_spec_validates_nested_source():
 
     with pytest.raises(ValidationError):
         build_spec(FunctionSpecDbt)
+
+
+def test_dbt_builder_routes_top_level_source_arguments():
+    builder = FunctionDbtBuilder()
+
+    function = builder.build(
+        kind=builder.ENTITY_KIND,
+        project="project",
+        name="function",
+        code="select 1",
+    )
+
+    assert function.spec.source.base64 == "c2VsZWN0IDE="
+    assert function.spec.source.lang == "sql"
 
 
 def test_dbt_task_and_run_specs_keep_their_own_fields():

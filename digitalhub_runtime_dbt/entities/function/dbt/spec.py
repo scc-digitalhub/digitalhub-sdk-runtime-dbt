@@ -6,11 +6,11 @@ from __future__ import annotations
 
 from digitalhub.entities.function._base.spec import FunctionSpec
 
-from digitalhub_runtime_dbt.entities.function.dbt.models import SourceValidator
+from digitalhub_runtime_dbt.entities.function.dbt.models import DbtSourceCode
 
 
 class FunctionSpecDbt(FunctionSpec):
     """Specification for a dbt function."""
 
-    source: SourceValidator
+    source: DbtSourceCode
     """Source code."""
