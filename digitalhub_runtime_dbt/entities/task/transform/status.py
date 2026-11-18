@@ -4,6 +4,6 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.task._base.status import TaskStatus
+from digitalhub.entities._base.entity.status import Status
 
-TaskStatusDbtTransform = TaskStatus
+TaskStatusDbtTransform = Status

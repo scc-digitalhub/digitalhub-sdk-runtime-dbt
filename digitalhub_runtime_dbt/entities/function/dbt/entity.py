@@ -11,8 +11,9 @@ from digitalhub.entities.function._base.entity import Function
 from digitalhub.utils.file_utils import eval_text_type
 
 if typing.TYPE_CHECKING:
+    from digitalhub.entities._base.entity.status import Status
+
     from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
-    from digitalhub_runtime_dbt.entities.function.dbt.status import FunctionStatusDbt
 
 
 class FunctionDbt(SourceEntityMixin, Function):
@@ -24,7 +25,7 @@ class FunctionDbt(SourceEntityMixin, Function):
         super().__init__(*args, **kwargs)
 
         self.spec: FunctionSpecDbt
-        self.status: FunctionStatusDbt
+        self.status: Status
 
     def _is_inlineable_source(self, path: str) -> bool:
         return eval_text_type(path)

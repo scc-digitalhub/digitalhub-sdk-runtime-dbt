@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from digitalhub.entities._base.entity.status import Status
 from digitalhub.entities._mixin.source.builder import SourceBuilderMixin
 from digitalhub.entities.function._base.builder import FunctionBuilder
 
@@ -11,7 +12,6 @@ from digitalhub_runtime_dbt.entities._base.runtime_entity.builder import Runtime
 from digitalhub_runtime_dbt.entities._commons.enums import EntityKinds
 from digitalhub_runtime_dbt.entities.function.dbt.entity import FunctionDbt
 from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
-from digitalhub_runtime_dbt.entities.function.dbt.status import FunctionStatusDbt
 
 
 class FunctionDbtBuilder(SourceBuilderMixin, FunctionBuilder, RuntimeEntityBuilderDbt):
@@ -21,5 +21,5 @@ class FunctionDbtBuilder(SourceBuilderMixin, FunctionBuilder, RuntimeEntityBuild
 
     ENTITY_CLASS = FunctionDbt
     ENTITY_SPEC_CLASS = FunctionSpecDbt
-    ENTITY_STATUS_CLASS = FunctionStatusDbt
+    ENTITY_STATUS_CLASS = Status
     ENTITY_KIND = EntityKinds.FUNCTION_DBT.value

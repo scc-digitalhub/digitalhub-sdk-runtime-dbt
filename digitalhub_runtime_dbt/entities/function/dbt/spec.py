@@ -4,12 +4,12 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.function._base.spec import FunctionSpec
+from digitalhub.entities._base.entity.spec import Spec
 
 from digitalhub_runtime_dbt.entities.function.dbt.models import DbtSourceCode
 
 
-class FunctionSpecDbt(FunctionSpec):
+class FunctionSpecDbt(Spec):
     """Specification for a dbt function."""
 
     source: DbtSourceCode
