@@ -9,8 +9,8 @@ import typing
 from digitalhub.entities.task._base.entity import Task
 
 if typing.TYPE_CHECKING:
-    from digitalhub_runtime_dbt.entities.task.transform.spec import TaskSpecDbtTransform
-    from digitalhub_runtime_dbt.entities.task.transform.status import TaskStatusDbtTransform
+    from digitalhub.entities._base.entity.status import Status
+    from digitalhub.entities.task._base.spec import TaskSpecFunction
 
 
 class TaskDbtTransform(Task):
@@ -21,5 +21,5 @@ class TaskDbtTransform(Task):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.spec: TaskSpecDbtTransform
-        self.status: TaskStatusDbtTransform
+        self.spec: TaskSpecFunction
+        self.status: Status

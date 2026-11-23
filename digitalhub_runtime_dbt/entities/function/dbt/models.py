@@ -25,6 +25,3 @@ class DbtSourceCode(HandlerSourceCode):
 
     DEFAULT_LANG: ClassVar[str | None] = "sql"
     lang: Lang = Field(default=Lang.SQL.value)
-
-
-SourceValidator = DbtSourceCode

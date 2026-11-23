@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.spec import LocalExecutionSpecMixin, RunSpec
+from digitalhub.entities.run._base.spec import LocalExecutionSpecMixin, RunSpecFunction
 
 
-class RunSpecDbtRun(RunSpec, LocalExecutionSpecMixin):
+class RunSpecDbtRun(RunSpecFunction, LocalExecutionSpecMixin):
     """Specification for a dbt transform run."""
 
     source: dict | None = None
