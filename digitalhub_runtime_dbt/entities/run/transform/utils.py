@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from digitalhub.entities._commons.enums import EntityTypes
 from digitalhub.entities.artifact.crud import get_artifact
 from digitalhub.entities.dataitem.crud import get_dataitem
 from digitalhub.entities.model.crud import get_model
+from digitalhub.plugins import EntityTypes
 
 
 def get_getter_for_material(entity_type: str) -> Callable:

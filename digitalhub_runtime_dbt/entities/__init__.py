@@ -2,29 +2,25 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from digitalhub.factory.plugins import CrudPlugin, EntityPlugin
+from digitalhub.plugins import CrudPlugin, EntityPlugin
 
 from digitalhub_runtime_dbt.entities.function.dbt.builder import FunctionDbtBuilder
 from digitalhub_runtime_dbt.entities.function.dbt.crud import new_function_dbt
 from digitalhub_runtime_dbt.entities.run.transform.builder import RunDbtRunBuilder
 from digitalhub_runtime_dbt.entities.task.transform.builder import TaskDbtTransformBuilder
 
-try:
-    from digitalhub_runtime_dbt.runtimes.builder import RuntimeDbtBuilder
-except ImportError as e:
-    from digitalhub.utils.logger.logger import get_logger
-
-    get_logger(__name__).debug(f"Error importing runtime builder: {e}")
-    RuntimeDbtBuilder = None
+# Imported on first use: the entities register even when the runtime cannot be
+# imported, and the import error is reported when a run executes locally.
+RUNTIME_DBT_BUILDER = "digitalhub_runtime_dbt.runtimes.builder:RuntimeDbtBuilder"
 
 function_dbt_plugin = EntityPlugin(
     builder=FunctionDbtBuilder,
     shortcuts=(CrudPlugin(new_function_dbt),),
-    runtime_builder=RuntimeDbtBuilder,
+    runtime_builder=RUNTIME_DBT_BUILDER,
 )
 
 entity_plugins = (
     function_dbt_plugin,
-    EntityPlugin(builder=TaskDbtTransformBuilder, runtime_builder=RuntimeDbtBuilder),
-    EntityPlugin(builder=RunDbtRunBuilder, runtime_builder=RuntimeDbtBuilder),
+    EntityPlugin(builder=TaskDbtTransformBuilder, runtime_builder=RUNTIME_DBT_BUILDER),
+    EntityPlugin(builder=RunDbtRunBuilder, runtime_builder=RUNTIME_DBT_BUILDER),
 )

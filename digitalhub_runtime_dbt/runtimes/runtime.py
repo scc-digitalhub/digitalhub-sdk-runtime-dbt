@@ -8,9 +8,8 @@ import typing
 from collections.abc import Callable
 
 from digitalhub.context.api import get_context
-from digitalhub.entities._constructors.uuid import build_uuid
 from digitalhub.factory.entity import entity_factory
-from digitalhub.runtimes._base import Runtime
+from digitalhub.plugins import Runtime, build_uuid
 from digitalhub.utils.logger.logger import get_logger
 
 from digitalhub_runtime_dbt.entities._commons.enums import Actions
@@ -29,7 +28,7 @@ from digitalhub_runtime_dbt.utils.outputs import build_status, create_dataitem_,
 
 if typing.TYPE_CHECKING:
     from dbt.contracts.results import RunResult
-    from digitalhub.entities.dataitem._base.entity import Dataitem
+    from digitalhub.plugins import Dataitem
 
 logger = get_logger(__file__)
 

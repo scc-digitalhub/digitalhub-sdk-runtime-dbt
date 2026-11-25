@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.runtimes.builder import RuntimeBuilder
+from digitalhub.plugins import RuntimeBuilder
 
 from digitalhub_runtime_dbt.runtimes.runtime import RuntimeDbt
 

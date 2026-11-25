@@ -8,8 +8,8 @@ import typing
 from dataclasses import dataclass
 
 import psycopg2
-from digitalhub.entities._commons.enums import EntityKinds, Relationship, State
 from digitalhub.factory.entity import entity_factory
+from digitalhub.plugins import EntityKinds, Relationship, State
 from digitalhub.utils.data_utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
 from digitalhub.utils.logger.logger import get_logger
 from psycopg2 import sql

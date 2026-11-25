@@ -6,20 +6,18 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.entities._commons.enums import Relationship
-from digitalhub.entities._commons.utils import get_entity_type_from_key
-from digitalhub.entities.run._base.entity import Run
+from digitalhub.plugins import Relationship, Run, get_entity_type_from_key
 
 from digitalhub_runtime_dbt.entities.run.transform.utils import get_getter_for_material
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._mixin.material.mixin import MaterialEntity
+    from digitalhub.plugins import ContextEntity
 
     from digitalhub_runtime_dbt.entities.run.transform.spec import RunSpecDbtRun
     from digitalhub_runtime_dbt.entities.run.transform.status import RunStatusDbtRun
 
 
-from digitalhub.entities.run._base.entity import LocalExecutionRunMixin
+from digitalhub.plugins import LocalExecutionRunMixin
 
 
 class RunDbtRun(LocalExecutionRunMixin, Run):
@@ -80,7 +78,7 @@ class RunDbtRun(LocalExecutionRunMixin, Run):
         output_name: str,
         as_key: bool = False,
         as_dict: bool = False,
-    ) -> MaterialEntity | dict | str | None:
+    ) -> ContextEntity | dict | str | None:
         """
         Get run's output by name.
 
@@ -104,7 +102,7 @@ class RunDbtRun(LocalExecutionRunMixin, Run):
         self,
         as_key: bool = False,
         as_dict: bool = False,
-    ) -> MaterialEntity | dict | str | None:
+    ) -> ContextEntity | dict | str | None:
         """
         Get run's outputs.
 

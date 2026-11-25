@@ -35,6 +35,9 @@ dev = [
     "digitalhub[dev]>=0.16.0, <0.17"
 ]
 
+[project.entry-points."digitalhub.runtimes"]
+dbt = "digitalhub_runtime_dbt:entity_plugins"
+
 [project.urls]
 Homepage = "https://github.com/scc-digitalhub/digitalhub-sdk-runtime-dbt"
 

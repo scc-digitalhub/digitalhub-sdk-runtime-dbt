@@ -1,6 +1,5 @@
 import pytest
-from digitalhub.entities._constructors.spec import build_spec
-from digitalhub.entities.task._base.spec import TaskSpecFunction
+from digitalhub.plugins import TaskSpecFunction, build_spec
 from pydantic import ValidationError
 
 from digitalhub_runtime_dbt.entities.function.dbt.builder import FunctionDbtBuilder

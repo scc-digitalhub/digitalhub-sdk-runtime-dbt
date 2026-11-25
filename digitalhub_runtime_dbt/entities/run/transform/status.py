@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities.run._base.status import RunStatus
+from digitalhub.plugins import RunStatus
 
 
 class RunStatusDbtRun(RunStatus):

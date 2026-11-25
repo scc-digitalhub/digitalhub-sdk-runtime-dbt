@@ -4,9 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities._base.entity.status import Status
-from digitalhub.entities._mixin.source.builder import SourceBuilderMixin
-from digitalhub.entities.function._base.builder import FunctionBuilder
+from digitalhub.plugins import FunctionBuilder, SourceBuilderMixin, Status
 
 from digitalhub_runtime_dbt.entities._base.runtime_entity.builder import RuntimeEntityBuilderDbt
 from digitalhub_runtime_dbt.entities._commons.enums import EntityKinds

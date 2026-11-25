@@ -6,12 +6,11 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.entities._mixin.source.entity import SourceEntityMixin
-from digitalhub.entities.function._base.entity import Function
+from digitalhub.plugins import Function, SourceEntityMixin
 from digitalhub.utils.file_utils import eval_text_type
 
 if typing.TYPE_CHECKING:
-    from digitalhub.entities._base.entity.status import Status
+    from digitalhub.plugins import Status
 
     from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
 

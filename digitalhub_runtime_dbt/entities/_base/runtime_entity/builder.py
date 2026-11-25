@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-from digitalhub.entities._commons.utils import map_actions
-from digitalhub.entities._mixin.runtime_entity.builder import RuntimeEntityBuilder
+from digitalhub.plugins import RuntimeEntityBuilder, map_actions
 
 from digitalhub_runtime_dbt.entities._commons.enums import Actions, EntityKinds
 
