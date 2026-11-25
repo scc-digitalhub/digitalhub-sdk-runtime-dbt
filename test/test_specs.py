@@ -1,8 +1,9 @@
 import pytest
+from digitalhub.factory.registry import registry
 from digitalhub.plugins import TaskSpecFunction, build_spec
 from pydantic import ValidationError
 
-from digitalhub_runtime_dbt.entities.function.dbt.builder import FunctionDbtBuilder
+from digitalhub_runtime_dbt.entities._commons.enums import EntityKinds
 from digitalhub_runtime_dbt.entities.function.dbt.models import DbtSourceCode
 from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
 from digitalhub_runtime_dbt.entities.run.transform.spec import RunSpecDbtRun
@@ -19,7 +20,7 @@ def test_dbt_function_spec_validates_nested_source():
 
 
 def test_dbt_builder_routes_top_level_source_arguments():
-    builder = FunctionDbtBuilder()
+    builder = registry.get_entity_builder(EntityKinds.FUNCTION_DBT.value)
 
     function = builder.build(
         kind=builder.ENTITY_KIND,

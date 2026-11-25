@@ -8,7 +8,7 @@ import typing
 
 from digitalhub.entities.function.crud import new_function
 
-from digitalhub_runtime_dbt.entities.function.dbt.builder import FunctionDbtBuilder
+from digitalhub_runtime_dbt.entities._commons.enums import EntityKinds
 
 if typing.TYPE_CHECKING:
     from digitalhub_runtime_dbt.entities.function.dbt.entity import FunctionDbt
@@ -51,7 +51,7 @@ def new_function_dbt(
     return new_function(
         project=project,
         name=name,
-        kind=FunctionDbtBuilder.ENTITY_KIND,
+        kind=EntityKinds.FUNCTION_DBT.value,
         uuid=uuid,
         version=version,
         description=description,
