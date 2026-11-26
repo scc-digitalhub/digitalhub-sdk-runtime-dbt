@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import psycopg2
 from digitalhub.factory.entity import entity_factory
-from digitalhub.plugins import EntityKinds, Relationship, State
+from digitalhub.plugins import EntityKey, EntityKinds, Relationship, State
 from digitalhub.utils.data_utils import check_preview_size, finalize_preview, prepare_data, prepare_preview
 from digitalhub.utils.logger.logger import get_logger
 from psycopg2 import sql
@@ -210,7 +210,7 @@ def create_dataitem_(
         dataitem = entity_factory.build_entity_from_params(**kwargs)
 
         # Update dataitem relationships with run key
-        dest = run_key + ":" + run_key.split("/")[-1]
+        dest = f"{run_key}:{EntityKey.parse(run_key).id}"
         dataitem.add_relationship(relation=Relationship.PRODUCEDBY.value, dest=dest)
 
         # Update dataitem status with preview

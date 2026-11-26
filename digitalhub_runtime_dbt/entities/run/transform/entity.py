@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import typing
 
-from digitalhub.plugins import Relationship, Run, get_entity_type_from_key
+from digitalhub.plugins import EntityKey, Relationship, Run
 
 from digitalhub_runtime_dbt.entities.run.transform.utils import get_getter_for_material
 
@@ -65,7 +65,7 @@ class RunDbtRun(LocalExecutionRunMixin, Run):
             return inputs
 
         for parameter, key in self.spec.inputs.items():
-            entity_type = get_entity_type_from_key(key)
+            entity_type = EntityKey.parse(key).entity_type
             entity = get_getter_for_material(entity_type)(key)
             if as_dict:
                 entity = entity.to_dict()
@@ -123,7 +123,7 @@ class RunDbtRun(LocalExecutionRunMixin, Run):
             return outputs
 
         for parameter, key in self.status.outputs.items():
-            entity_type = get_entity_type_from_key(key)
+            entity_type = EntityKey.parse(key).entity_type
             entity = get_getter_for_material(entity_type)(key)
             if as_key:
                 entity = entity.key
