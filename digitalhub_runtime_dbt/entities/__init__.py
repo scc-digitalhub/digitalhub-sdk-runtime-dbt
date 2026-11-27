@@ -11,6 +11,7 @@ from digitalhub.plugins import (
     RunBuilder,
     SourceBuilderMixin,
     Status,
+    Task,
     TaskBuilder,
     TaskSpecFunction,
 )
@@ -22,7 +23,6 @@ from digitalhub_runtime_dbt.entities.function.dbt.spec import FunctionSpecDbt
 from digitalhub_runtime_dbt.entities.run.transform.entity import RunDbtRun
 from digitalhub_runtime_dbt.entities.run.transform.spec import RunSpecDbtRun
 from digitalhub_runtime_dbt.entities.run.transform.status import RunStatusDbtRun
-from digitalhub_runtime_dbt.entities.task.transform.entity import TaskDbtTransform
 
 dbt = ExecFamily(
     executable=BuilderDef(
@@ -38,7 +38,7 @@ dbt = ExecFamily(
         Actions.TRANSFORM: Action(
             task=BuilderDef(
                 EntityKinds.TASK_DBT_TRANSFORM,
-                TaskDbtTransform,
+                Task,
                 TaskSpecFunction,
                 Status,
                 base=TaskBuilder,

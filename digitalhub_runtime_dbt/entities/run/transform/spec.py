@@ -8,17 +8,7 @@ from digitalhub.plugins import LocalExecutionSpecMixin, RunSpecFunction
 
 
 class RunSpecDbtRun(RunSpecFunction, LocalExecutionSpecMixin):
-    """Specification for a dbt transform run."""
-
     source: dict | None = None
-
     inputs: dict | None = None
-    """Run inputs."""
-
     outputs: dict | None = None
-    """Run outputs."""
-
     parameters: dict | None = None
-    """Run parameters."""
-
-    """Whether to execute the run locally instead of in the cluster."""
