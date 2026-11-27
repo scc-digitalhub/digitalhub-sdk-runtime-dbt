@@ -8,19 +8,11 @@ import shutil
 from pathlib import Path
 
 import psycopg2
+from digitalhub.plugins import fetch_source
 from digitalhub.stores.client.common.api import get_credentials_and_config
 from digitalhub.stores.client.common.enums import ConfigurationVars, CredentialsVars
-from digitalhub.stores.data.api import get_store
-from digitalhub.utils.generic_utils import decode_base64_string, extract_archive, requests_chunk_download
-from digitalhub.utils.git_utils import clone_repository
+from digitalhub.utils.generic_utils import decode_base64_string
 from digitalhub.utils.logger.logger import get_logger
-from digitalhub.utils.uri_utils import (
-    get_filename_from_uri,
-    has_git_scheme,
-    has_remote_scheme,
-    has_s3_scheme,
-    has_zip_scheme,
-)
 from psycopg2 import sql
 
 logger = get_logger(__file__)
@@ -242,34 +234,11 @@ def save_function_source(path: Path, source_spec: dict) -> str:
     if source is None:
         raise RuntimeError("Function source not found in spec.")
 
-    # Git repo
-    if has_git_scheme(source):
-        clone_repository(path, source)
-
-    # Http(s) or s3 presigned urls
-    elif has_remote_scheme(source):
-        filename = path / get_filename_from_uri(source)
-        if has_zip_scheme(source):
-            requests_chunk_download(source.removeprefix("zip+"), filename)
-            extract_archive(path, filename)
-            filename.unlink()
-        else:
-            requests_chunk_download(source, filename)
-
-    # S3 path
-    elif has_s3_scheme(source):
-        if not has_zip_scheme(source):
-            raise RuntimeError("S3 source must be a zip file with scheme zip+s3://.")
-        filename = path / get_filename_from_uri(source)
-        store = get_store(source.removeprefix("zip+"))
-        store.get_s3_source(source, filename)
-        extract_archive(path, filename)
-        filename.unlink()
+    fetch_source(path, source)
 
     if handler is not None:
         return (path / handler).read_text()
 
-    # Unsupported scheme
     raise RuntimeError("Unable to collect source.")
 
 
